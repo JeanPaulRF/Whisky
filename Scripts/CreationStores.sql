@@ -71,7 +71,7 @@ CREATE TABLE Client (
 
 CREATE TABLE Suscription (
 	[id] INT,
-	[name_] VARCHAR(16),
+	[name_] VARCHAR(32),
 	[discountBuy] INT,
 	[discountDelivery] INT,
 

@@ -72,11 +72,14 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION T1
 
+			DECLARE @fecha DATE = CONVERT(DATE, GETDATE());
+
 			UPDATE Inventory
 			SET quantity = quantity-@quantity
 			WHERE idProduct = @idProduct
 
-			INSERT INTO OPENQUERY([MASTERDBPOSTGRES], 'SELECT date_, total')
+			INSERT INTO OPENQUERY([MASTERDBPOSTGRES], 'SELECT idProduct, quantity, date_, deliveryCost FROM Sale')
+			VALUES (@idProduct, @quantity, @fecha, 0)
 
 		COMMIT TRANSACTION T1
 	 END TRY
@@ -91,43 +94,35 @@ BEGIN
 END;
 GO
 
-INSERT INTO [MASTERDBPOSTGRES].MasterDB.[public].producttype (id, name_) VALUES(6, 'hola')
 
+CREATE PROCEDURE GetSuscription(
+	@idCliente int,
+	@name_ varchar(32),
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
 
+			DECLARE @fecha DATE = CONVERT(DATE, GETDATE());
 
-sp_addlinkedserver @server= 'MasterDB', 
-	@srvproduct= 'product_name',
-	@provider= 'provider_name', 
-	@datasrc= 'data_source',
-	@location= 'location',
-	@provstr= 'provider_string',
-	@catalog= 'catalog'
+			UPDATE Inventory
+			SET quantity = quantity-@quantity
+			WHERE idProduct = @idProduct
 
-USE Master
+			INSERT INTO OPENQUERY([MASTERDBPOSTGRES], 'SELECT idProduct, quantity, date_, deliveryCost FROM Sale')
+			VALUES (@idProduct, @quantity, @fecha, 0)
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+
+END;
 GO
-
-EXEC sp_addlinkedserver @server='MasterPostgreSQL',
-@provider='SQLNCLI',
-@datasrc='whiskypostgres.ckane6ejq4bl.us-west-1.rds.amazonaws.com,5432',
-@catalog='CData PostgreSQL Sys',
-@srvproduct='';
-GO
-
-USE Master
-GO
-EXEC sp_addlinkedsrvlogin @rmtsrvname='MasterPostgreSQL',
-@rmtuser='admin123',
-@rmtpassword='admin123',
-@useself='FALSE',
-@locallogin=NULL;
-GO
-
-SELECT * FROM OPENQUERY(MasterPostgreSQL, 'select * from Supplier');
-
-
-
-USE master;
-GRANT ALTER ANY LINKED SERVER TO admin;
-GO
-USE master;
-GRANT ALTER ANY LOGIN SERVER TO admin; 

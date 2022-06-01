@@ -60,16 +60,12 @@ CREATE TABLE WorkerType (
 
 CREATE TABLE Sale (
 	id serial PRIMARY KEY,
+	idProduct INT,
+	quantity INT,
 	date_ DATE,
-	total INT,
 	deliveryCost INT
 );
 
-CREATE TABLE SaleXProduct (
-	id serial PRIMARY KEY,
-	idProduct INT,
-	idSale INT
-);
 
 CREATE TABLE Review (
 	id serial PRIMARY KEY,
@@ -117,23 +113,3 @@ ALTER TABLE ProductXSale
 ADD CONSTRAINT fk_ProductXSale_Sale
 FOREIGN KEY (idSale) 
 REFERENCES Sale (id);
-
-
-
-CREATE OR REPLACE FUNCTION getProduct(id_ int) RETURNS int AS $$
-BEGIN
-	SELECT * FROM Product WHERE id = id_
-	RETURN 0;
-EXCEPTION
-	WHEN no_data_found THEN --Si no encuentra datos
-		--Mostrar error
-		RETURN 50005;
-END;
-$$ LANGUAGE plpgsql;
-
-
-
-INSERT INTO Supplier(name_) VALUES('bimbo');
-
-
-SELECT * FROM Supplier
