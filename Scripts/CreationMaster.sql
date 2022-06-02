@@ -26,15 +26,15 @@ CREATE TABLE Worker (
 
 CREATE TABLE Product (
 	id serial PRIMARY KEY,
-	name_ VARCHAR(10),
-	aged VARCHAR(10),
-	idSupplier VARCHAR(10),
+	name_ VARCHAR(16),
+	aged VARCHAR(16),
+	idSupplier INT,
 	presentation VARCHAR(64),
-	currency VARCHAR(10),
-	cost_ NUMERIC,
+	currency VARCHAR(16),
+	cost_ INT,
 	idTypeProduct INT,
-	idImage INT,
-	special BOOLEAN
+	special BOOLEAN,
+    active_ BOOLEAN
 );
 
 CREATE TABLE Supplier (
@@ -48,7 +48,7 @@ CREATE TABLE Image_ (
 	image_ bytea
 );
 
-CREATE TABLE ProdcutType (
+CREATE TABLE ProductType (
 	id INT PRIMARY KEY,
 	name_ VARCHAR(64)
 );
@@ -87,14 +87,14 @@ REFERENCES WorkerType (id);
 --Product->ProductType
 ALTER TABLE Product
 ADD CONSTRAINT fk_Product_ProductType
-FOREIGN KEY (idProductType) 
+FOREIGN KEY (idTypeProduct) 
 REFERENCES ProductType (id);
 
---Product->Image
-ALTER TABLE Product
-ADD CONSTRAINT fk_Product_Image
-FOREIGN KEY (idImage) 
-REFERENCES Image_ (id);
+--Image->Product
+ALTER TABLE Image_
+ADD CONSTRAINT fk_Image_Product
+FOREIGN KEY (idProduct) 
+REFERENCES Product (id);
 
 --Product->Supplier
 ALTER TABLE Product
@@ -102,14 +102,24 @@ ADD CONSTRAINT fk_Product_Supplier
 FOREIGN KEY (idSupplier) 
 REFERENCES Supplier (id);
 
---ProductXSale->Product
-ALTER TABLE ProductXSale
-ADD CONSTRAINT fk_ProductXSale_Product
+--Sale->Product
+ALTER TABLE Sale
+ADD CONSTRAINT fk_Sale_Product
 FOREIGN KEY (idProduct) 
 REFERENCES Product (id);
 
---ProductXSale->Sale
-ALTER TABLE ProductXSale
-ADD CONSTRAINT fk_ProductXSale_Sale
-FOREIGN KEY (idSale) 
-REFERENCES Sale (id);
+
+--Insert Product Types
+INSERT INTO ProductType(id, name_) VALUES(1, 'Single Malt');
+INSERT INTO ProductType(id, name_) VALUES(2, 'Blended Scotch');
+INSERT INTO ProductType(id, name_) VALUES(3, 'Irish');
+INSERT INTO ProductType(id, name_) VALUES(4, 'Blended Malt');
+INSERT INTO ProductType(id, name_) VALUES(5, 'Bourbon');
+INSERT INTO ProductType(id, name_) VALUES(6, 'Tennessee Whiskey');
+
+--Insert Suppliers
+INSERT INTO Supplier(name_) VALUES('bimbo');
+
+
+
+

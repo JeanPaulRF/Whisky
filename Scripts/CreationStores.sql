@@ -116,6 +116,9 @@ VALUES (1, 'Scotland', geometry::STGeomFromText('POLYGON((2 1, 3 1, 3 3, 2 3, 2 
 
 
 --UserTypes
+INSERT INTO UserType(id, name_) VALUES(1, 'admin')
+INSERT INTO UserType(id, name_) VALUES(2, 'extern')
+INSERT INTO UserType(id, name_) VALUES(3, 'worker')
 
 
 --Suscriptions
