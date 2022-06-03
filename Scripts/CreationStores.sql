@@ -65,6 +65,8 @@ CREATE TABLE Client (
 	[telephone] VARCHAR(16),
 	[quantityBuy] INT,
 	[idSuscription] INT,
+	[location1] GEOGRAPHY,
+	[location2] AS [location1].STAsText(),
 
 	CONSTRAINT pk_Client PRIMARY KEY (id)
 );

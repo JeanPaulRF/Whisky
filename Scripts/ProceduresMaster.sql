@@ -86,3 +86,112 @@ $$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE PROCEDURE GetProductsByType(@name_, VARCHAR(16), @special BOOLEAN)  
+AS 
+$$
+	BEGIN
+		SELECT 
+			p.id,
+			p.name_,
+			p.aged,
+			s.name_,
+			p.presentation,
+			p.currency,
+			p.cost_,
+			@name_,
+		FROM Product p, ProductType t, Supplier s
+		WHERE t.name_ = @name_
+		AND p.idTypeProduct = t.id
+		AND s.id = p.idSupplier
+		AND (p.special = @special OR p.special = 0)
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE PROCEDURE GetProductsByCost(@cost_, INT, @special BOOLEAN)  
+AS 
+$$
+	BEGIN
+		SELECT 
+			p.id,
+			p.name_,
+			p.aged,
+			s.name_,
+			p.presentation,
+			p.currency,
+			p.cost_,
+			t.name_,
+		FROM Product p, ProductType t, Supplier s
+		WHERE p.cost_ = cost_
+		AND p.idTypeProduct = t.id
+		AND s.id = p.idSupplier
+		AND (p.special = @special OR p.special = 0)
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE PROCEDURE GetProductsByCost(@cost_, INT, @special BOOLEAN)  
+AS 
+$$
+	BEGIN
+		SELECT 
+			p.id,
+			p.name_,
+			p.aged,
+			s.name_,
+			p.presentation,
+			p.currency,
+			p.cost_,
+			t.name_,
+		FROM Product p, ProductType t, Supplier s
+		WHERE p.cost_ = cost_
+		AND p.idTypeProduct = t.id
+		AND s.id = p.idSupplier
+		AND (p.special = @special OR p.special = 0)
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE PROCEDURE GetProductsByBestSeller(@special BOOLEAN)
+AS 
+$$
+	BEGIN
+		SELECT 
+			SUM(v.quantity)*COUNT(id FROM Sale WHERE id = p.id) as Sales
+			p.id,
+			p.name_,
+			p.aged,
+			s.name_,
+			p.presentation,
+			p.currency,
+			p.cost_,
+			t.name_,
+		FROM Product p, ProductType t, Supplier s, Sale v
+		AND p.idTypeProduct = t.id
+		AND s.id = p.idSupplier
+		AND (p.special = @special OR p.special = 0)
+		AND v.idProduct = p.id
+		ORDER BY Sales DESC
+		
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;

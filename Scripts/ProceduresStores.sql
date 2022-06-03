@@ -36,7 +36,7 @@ BEGIN
 END;
 GO
 
-DROP PROCEDURE ReadProduct
+
 CREATE PROCEDURE ReadProduct(
 	@name_ VARCHAR(16),
 	@outCodeResult int OUTPUT)
@@ -296,5 +296,112 @@ BEGIN
 
 END;
 GO
+
+
+
+CREATE PROCEDURE GetProductByDistance(
+	@idClient int,
+	@name int,
+	@special bit,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			DECLARE @temp TABLE(
+			id INT,
+			name_ VARCHAR(16),
+			aged VARCHAR(16),
+			idSupplier INT,
+			presentation VARCHAR(64),
+			currency VARCHAR(16),
+			cost_ INT,
+			idTypeProduct INT,
+			special BIT,
+			active_ BIT)
+
+			INSERT INTO @temp(id,
+			name_,
+			aged,
+			idSupplier,
+			presentation,
+			currency,
+			cost_,
+			idTypeProduct,
+			special,
+			active_)
+			SELECT * FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT 
+				name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_ FROM Product' )
+
+			SELECT 
+			c.location1.STDistance(s.location1) as Distance,
+			i.quantity,
+			t.id,
+			t.name_,
+			t.aged,
+			--t.idSupplier,
+			t.presentation,
+			t.currency,
+			t.cost_
+			--t.idTypeProduct
+			FROM @temp t, Client c, Store s, Inventory i
+			WHERE active_ = 1
+			AND (special = @special OR special = 0)
+			AND i.idProduct = t.id
+
+			UNION ALL
+
+			SELECT 
+			c.location1.STDistance(s.location1) as Distance,
+			i.quantity,
+			t.id,
+			t.name_,
+			t.aged,
+			--t.idSupplier,
+			t.presentation,
+			t.currency,
+			t.cost_
+			--t.idTypeProduct
+			FROM @temp t, Client c, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Inventory i
+			WHERE active_ = 1
+			AND (special = @special OR special = 0)
+			AND i.idProduct = t.id
+
+			UNION ALL
+
+			SELECT 
+			c.location1.STDistance(s.location1) as Distance,
+			i.quantity,
+			t.id,
+			t.name_,
+			t.aged,
+			--t.idSupplier,
+			t.presentation,
+			t.currency,
+			t.cost_
+			--t.idTypeProduct
+			FROM @temp t, Client c, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Inventory i
+			WHERE active_ = 1
+			AND (special = @special OR special = 0)
+			AND i.idProduct = t.id
+
+			ORDER BY Distance DESC
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+
+END;
+GO
+
+
 
 
