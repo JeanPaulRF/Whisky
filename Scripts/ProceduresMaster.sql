@@ -1,4 +1,9 @@
---create a product
+
+
+
+--Postgres
+--CRUD Product
+
 CREATE OR REPLACE PROCEDURE CreateProduct(
 	_name_ VARCHAR(16),
 	_aged VARCHAR(16),

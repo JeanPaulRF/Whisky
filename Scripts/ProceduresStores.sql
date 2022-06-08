@@ -4,15 +4,15 @@ GO
 
 
 
---shows the store's inventory
-CREATE PROCEDURE ShowInventory(@idSuscription int, @outCodeResult int OUTPUT)
+CREATE PROCEDURE ShowInventory(@idClient int, @outCodeResult int OUTPUT)
 AS
 BEGIN
 	SET NOCOUNT ON
 	BEGIN TRY
 		BEGIN TRANSACTION T1
 
-			IF 2 > @idSuscription --if has none or low suscription
+			IF 2 > (SELECT idSuscription FROM Client WHERE id=@idClient)
+
 				BEGIN
 				SELECT i.idProduct, 
 					i.quantity,
@@ -156,6 +156,7 @@ END;
 GO
 
 
+EXEC CreateProduct 'luis', 'viejo', 1, 'buena', 'dolar', 10, 1, 0, 0
 
 CREATE PROCEDURE GetProductByDistance(
 	@idClient int,

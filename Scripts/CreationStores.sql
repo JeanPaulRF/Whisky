@@ -1,3 +1,4 @@
+-- SQL Server
 --DATABASES
 
 CREATE DATABASE [ScotlandStore];
@@ -23,7 +24,7 @@ GO
 CREATE TABLE Store (
 	[id] INT,
 	[name_] VARCHAR(16),
-	[location1] GEOGRAPHY,
+	[location1] GEOMETRY,
 	[location2] AS [location1].STAsText(),
 
 	CONSTRAINT pk_Store PRIMARY KEY (id)
@@ -121,15 +122,16 @@ VALUES (1, 'Scotland', geometry::STGeomFromText('POLYGON((2 1, 3 1, 3 3, 2 3, 2 
 INSERT INTO UserType(id, name_) VALUES(1, 'admin')
 INSERT INTO UserType(id, name_) VALUES(2, 'extern')
 INSERT INTO UserType(id, name_) VALUES(3, 'worker')
+INSERT INTO UserType(id, name_) VALUES(4, 'user')
 
 
 --Suscriptions
 INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
 VALUES(1, 'None', 0, 0)
 INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
-VALUES(1, 'Tier Short Glass', 5, 0)
+VALUES(2, 'Tier Short Glass', 5, 0)
 INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
-VALUES(1, 'Tier Gleincairn', 10, 20)
+VALUES(3, 'Tier Gleincairn', 10, 20)
 INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
-VALUES(1, 'Tier Master Distiller', 30, 100)
+VALUES(4, 'Tier Master Distiller', 30, 100)
 
