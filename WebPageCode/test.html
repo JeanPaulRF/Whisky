@@ -16,16 +16,14 @@ location2: <input type="text" name="location2" value="Scotland"><br>
 
 
 <input type="submit" value="Submit">
+
 </form> 
 
-<?php 
-if(isset($_POST['sumit'])){
- $Fname=$_POST['FirstName']; 
- $Lname=$_POST['LastName']; 
- mysql_connect("server", "xxxxxx", "xxxxxx") or die(mysql_error()); 
- mysql_select_db("test_name") or die(mysql_error()); 
- mysql_query("INSERT INTO `FirstName`,'LastName' VALUES ('$Fname', '$Lname')"); 
- Print "Your information has been successfully added to the database."; }
+<?php
+
+	include_once("conexion.php");
+	Cconexion::ConexionDB();
+
  ?>  
 
 <p>If you click the "Submit" button, the form-data will be sent to a my test table test_name.</p>
