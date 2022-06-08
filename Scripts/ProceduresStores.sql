@@ -2,144 +2,6 @@ USE ScotlandStore
 GO
 
 
---CRUD Productos
-CREATE PROCEDURE CreateProduct(
-	@name_ VARCHAR(16),
-	@aged VARCHAR(16),
-	@idSupplier INT,
-	@presentation VARCHAR(64),
-	@currency VARCHAR(16),
-	@cost_ INT,
-	@idTypeProduct INT,
-	@special BIT,
-	@outCodeResult int OUTPUT)
-AS
-BEGIN
-	SET NOCOUNT ON
-	BEGIN TRY
-		BEGIN TRANSACTION T1
-
-			INSERT INTO OPENQUERY ([MASTERDBPOSTGRES], 
-			'SELECT name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special FROM Product')
-			VALUES(@name_, @aged, @idSupplier, @presentation, @currency, @cost_, @idTypeProduct, @special)
-
-		COMMIT TRANSACTION T1
-	 END TRY
-	 BEGIN CATCH
-		IF @@tRANCOUNT>0
-			ROLLBACK TRAN T1;
-		--INSERT EN TABLA DE ERRORES;
-		SET @outCodeResult=50005;
-	 END CATCH
-	 SET NOCOUNT OFF
-
-END;
-GO
-
-
-CREATE PROCEDURE ReadProduct(
-	@name_ VARCHAR(16),
-	@outCodeResult int OUTPUT)
-AS
-BEGIN
-	SET NOCOUNT ON
-	BEGIN TRY
-		BEGIN TRANSACTION T1
-
-			DECLARE @sql varchar(800)
-			SELECT @sql = 'SELECT * FROM OPENQUERY ([MASTERDBPOSTGRES],
-			SELECT 
-				name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special FROM Product 
-			WHERE name_ = ' + @name_
-
-			EXEC (@sql)
-
-		COMMIT TRANSACTION T1
-	 END TRY
-	 BEGIN CATCH
-		IF @@tRANCOUNT>0
-			ROLLBACK TRAN T1;
-		--INSERT EN TABLA DE ERRORES;
-		SET @outCodeResult=50005;
-	 END CATCH
-	 SET NOCOUNT OFF
-END;
-GO
-
-CREATE PROCEDURE UpdateProduct(
-	@nameOld VARCHAR(16),
-	@name_ VARCHAR(16),
-	@aged VARCHAR(16),
-	@idSupplier INT,
-	@presentation VARCHAR(64),
-	@currency VARCHAR(16),
-	@cost_ INT,
-	@idTypeProduct INT,
-	@special BIT,
-	@outCodeResult int OUTPUT)
-AS
-BEGIN
-	SET NOCOUNT ON
-	BEGIN TRY
-		BEGIN TRANSACTION T1
-
-			DECLARE @sql varchar(400)
-			SELECT @sql = 'UPDATE OPENQUERY ([MASTERDBPOSTGRES], ''
-			SELECT 
-				name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special FROM Product 
-			WHERE name_ = ' + @nameOld + ''')
-			SET name_ = '+QUOTENAME(@name_,'''')+', 
-				aged = '+QUOTENAME(@aged,'''')+', 
-				idSupplier = '+QUOTENAME(CONVERT(VARCHAR, @idSupplier),'''')+', 
-				presentation = '+QUOTENAME(@presentation,'''')+',  
-				currency = '+QUOTENAME(@currency,'''')+', 
-				cost_ = '+QUOTENAME(CONVERT(VARCHAR, @cost_),'''')+', 
-				idTypeProduct = '+QUOTENAME(CONVERT(VARCHAR, @idTypeProduct),'''')+', 
-				special = '+QUOTENAME(CONVERT(VARCHAR, @special),'''')
-
-			EXEC (@sql)
-
-		COMMIT TRANSACTION T1
-	 END TRY
-	 BEGIN CATCH
-		IF @@tRANCOUNT>0
-			ROLLBACK TRAN T1;
-		--INSERT EN TABLA DE ERRORES;
-		SET @outCodeResult=50005;
-	 END CATCH
-	 SET NOCOUNT OFF
-
-END;
-GO
-
-CREATE PROCEDURE DeleteProduct(
-	@name_ VARCHAR(16),
-	@outCodeResult int OUTPUT)
-AS
-BEGIN
-	SET NOCOUNT ON
-	BEGIN TRY
-		BEGIN TRANSACTION T1
-
-			DECLARE @sql varchar(200)
-			SELECT @sql = 'UPDATE OPENQUERY ([MASTERDBPOSTGRES], ''SELECT active_ FROM Product WHERE name_ = ' + @name_ + ''')
-			SET active_ = 0'
-
-			EXEC (@sql)
-
-		COMMIT TRANSACTION T1
-	 END TRY
-	 BEGIN CATCH
-		IF @@tRANCOUNT>0
-			ROLLBACK TRAN T1;
-		--INSERT EN TABLA DE ERRORES;
-		SET @outCodeResult=50005;
-	 END CATCH
-	 SET NOCOUNT OFF
-END;
-GO
-
-
 
 
 CREATE PROCEDURE ShowInventory(@idClient int, @outCodeResult int OUTPUT)
@@ -150,6 +12,7 @@ BEGIN
 		BEGIN TRANSACTION T1
 
 			IF 2 > (SELECT idSuscription FROM Client WHERE id=@idClient)
+
 				BEGIN
 				SELECT i.idProduct, 
 					i.quantity,
@@ -159,17 +22,18 @@ BEGIN
 					p.currency,
 					p.cost_,
 					t.name_,
-					p.idImage
-				FROM Inventory i, Client c
+					i2.image_
+				FROM Inventory i,
 					[MASTERDBPOSTGRES].MasterDB.[public].product p,
 					[MASTERDBPOSTGRES].MasterDB.[public].producttype t,
+					[MASTERDBPOSTGRES].MasterDB.[public].image_ i2
 				WHERE quantity>0
 				AND p.id = i.idProduct
 				AND p.idTypeProduct = t.id
-				AND @idClient = c.id
 				AND p.special = 0
+				AND i2.idProduct = p.id
 				END
-			ELSE
+			ELSE --if has high suscription
 				BEGIN
 				SELECT i.idProduct, 
 					i.quantity,
@@ -179,14 +43,15 @@ BEGIN
 					p.currency,
 					p.cost_,
 					t.name_,
-					p.idImage
-				FROM Inventory i, Client c
+					i2.image_
+				FROM Inventory i,
 					[MASTERDBPOSTGRES].MasterDB.[public].product p,
 					[MASTERDBPOSTGRES].MasterDB.[public].producttype t,
+					[MASTERDBPOSTGRES].MasterDB.[public].image_ i2
 				WHERE quantity>0
 				AND p.id = i.idProduct
 				AND p.idTypeProduct = t.id
-				AND @idClient = c.id
+				AND i2.idProduct = p.id
 				END
 
 		COMMIT TRANSACTION T1
@@ -398,4 +263,127 @@ GO
 
 
 
+CREATE PROCEDURE GetProductByDistance(
+	@uidClient int,
+	@nameStore VARCHAR(32),
+	@special bit,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
 
+			DECLARE @temp TABLE(
+			id INT,
+			quantity INT,
+			idProduct INT,
+			nameStore VARCHAR(32),
+			distance FLOAT)
+
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM Inventory i, Store s, Client c
+			WHERE i.idStore=s.id
+
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			DECLARE @idSuscription INT
+			SET @idSuscription = (SELECT idSuscription FROM Client WHERE uid=@uidClient)
+
+			IF 2 > @idSuscription --if has none or low suscription
+				BEGIN
+				SELECT i.nameStore,
+					i.distance
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					t.name_,
+					i2.image_
+				FROM @temp i,
+					[MASTERDBPOSTGRES].MasterDB.[public].product p,
+					[MASTERDBPOSTGRES].MasterDB.[public].producttype t,
+					[MASTERDBPOSTGRES].MasterDB.[public].image_ i2
+				WHERE quantity>0
+				AND p.id = i.idProduct
+				AND p.idTypeProduct = t.id
+				AND p.special = 0
+				AND i2.idProduct = p.id
+				ORDER BY i.distance ASC
+				END
+			ELSE --if has high suscription
+				BEGIN
+				SELECT i.nameStore,
+					i.distance
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					t.name_,
+					i2.image_
+				FROM @temp i,
+					[MASTERDBPOSTGRES].MasterDB.[public].product p,
+					[MASTERDBPOSTGRES].MasterDB.[public].producttype t,
+					[MASTERDBPOSTGRES].MasterDB.[public].image_ i2
+				WHERE quantity>0
+				AND p.id = i.idProduct
+				AND p.idTypeProduct = t.id
+				AND i2.idProduct = p.id
+				ORDER BY i.distance ASC
+				END
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+
+END;
+GO
+
+
+
+
+
+CREATE PROCEDURE GetSuscription(
+	@uidClient int,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			SELECT idSuscription FROM Client WHERE uid=@uidClient
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+
+END;
+GO
