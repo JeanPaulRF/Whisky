@@ -141,13 +141,6 @@ GO
 
 
 
-EXEC CreateProduct 'luis', 'viejo', 1, 'buena', 'dolar', 10, 1, 0, 0
-
-EXEC ReadProduct 'luis', 0
-
-
-
-
 
 CREATE PROCEDURE ShowInventory(@idClient int, @outCodeResult int OUTPUT)
 AS
@@ -298,6 +291,7 @@ END;
 GO
 
 
+EXEC CreateProduct 'luis', 'viejo', 1, 'buena', 'dolar', 10, 1, 0, 0
 
 CREATE PROCEDURE GetProductByDistance(
 	@idClient int,

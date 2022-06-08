@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+ <html>
+<body>
+
+<form name="input" action="test.php" method="post">
+
+ID: <input type="text" name="ID" value="6"><br>
+Nombre: <input type="text" name="Nombre" value="nombre"><br>
+UID: <input type="text" name="UID" value="666"><br>
+email: <input type="text" name="email" value="email@gmail.com"><br>
+telefono: <input type="text" name="telefono" value="70959696"><br>
+quantity: <input type="text" name="quantity" value="0"><br>
+idSuscription: <input type="text" name="idSuscription" value="1"><br>
+location1: <input type="text" name="location1" value="USA"><br>
+location2: <input type="text" name="location2" value="Scotland"><br>
+
+
+<input type="submit" value="Submit">
+</form> 
+
+<?php 
+if(isset($_POST['sumit'])){
+ $Fname=$_POST['FirstName']; 
+ $Lname=$_POST['LastName']; 
+ mysql_connect("server", "xxxxxx", "xxxxxx") or die(mysql_error()); 
+ mysql_select_db("test_name") or die(mysql_error()); 
+ mysql_query("INSERT INTO `FirstName`,'LastName' VALUES ('$Fname', '$Lname')"); 
+ Print "Your information has been successfully added to the database."; }
+ ?>  
+
+<p>If you click the "Submit" button, the form-data will be sent to a my test table test_name.</p>
