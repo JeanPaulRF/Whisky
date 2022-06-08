@@ -2,6 +2,61 @@ USE ScotlandStore
 GO
 
 
+CREATE PROCEDURE CreateUser(
+	@username VARCHAR(16),
+	@pass VARBINARY(64),
+	@key VARCHAR(64),
+	@administrator BINARY,
+	@idClient INT,
+	@idUserType INT,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			DECLARE @pssb VARBINARY(64)
+			SET @pssb = (ENCRYPTBYPASSPHRASE(@key, @pssb))
+
+			INSERT INTO User_(username, @pssb, key_, administrator, idClient, idUserType)
+			VALUES(@username, @pass, @key, @administrator, @idClient, @idUserType)
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+CREATE PROCEDURE ReadUser(
+	@username VARCHAR(16),
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			SELECT unencripted=CONVERT(varchar(64), DECRYPTBYPASSPHRASE(key_, pass)), * FROM User_ WHERE username=@username
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
 
 
 CREATE PROCEDURE ShowInventory(@idClient int, @outCodeResult int OUTPUT)
