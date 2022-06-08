@@ -1,18 +1,18 @@
---CRUD Product
+--create a product
 CREATE OR REPLACE PROCEDURE CreateProduct(
-	@name_ VARCHAR(16),
-	@aged VARCHAR(16),
-	@idSupplier INT,
-	@presentation VARCHAR(64),
-	@currency VARCHAR(16),
-	@cost_ INT,
-	@idTypeProduct INT,
-	@special BOOLEAN)  
+	_name_ VARCHAR(16),
+	_aged VARCHAR(16),
+	_idSupplier INT,
+	_presentation VARCHAR(64),
+	_currency VARCHAR(16),
+	_cost_ INT,
+	_idTypeProduct INT,
+	_special BOOLEAN)  
 AS 
 $$
 	BEGIN
 		INSERT INTO Producto(name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special)
-		VALUES(@name_, @aged, @idSupplier, @presentation, @currency, @cost_, @idTypeProduct, @special)
+		VALUES(_name_, _aged, _idSupplier, _presentation, _currency, _cost_, _idTypeProduct, _special)
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -21,14 +21,14 @@ $$
 $$ 
 LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE PROCEDURE ReadProduct(@name_ VARCHAR(16))  
+--read a product
+CREATE OR REPLACE PROCEDURE ReadProduct(_name_ VARCHAR(16))  
 AS 
 $$
 	BEGIN
 		SELECT name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special
 		From Producto
-		WHERE name_ = @name_
+		WHERE name_ = _name_
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -38,29 +38,30 @@ $$
 LANGUAGE plpgsql;
 
 
+--update a product
 CREATE OR REPLACE PROCEDURE UpdateProduct(
-	@nameOld VARCHAR(16),
-	@name_ VARCHAR(16),
-	@aged VARCHAR(16),
-	@idSupplier INT,
-	@presentation VARCHAR(64),
-	@currency VARCHAR(16),
-	@cost_ INT,
-	@idTypeProduct INT,
-	@special BOOLEAN)  
+	_nameOld VARCHAR(16),
+	_name_ VARCHAR(16),
+	_aged VARCHAR(16),
+	_idSupplier INT,
+	_presentation VARCHAR(64),
+	_currency VARCHAR(16),
+	_cost_ INT,
+	_idTypeProduct INT,
+	_special BOOLEAN)  
 AS 
 $$
 	BEGIN
 		UPDATE Producto
-		SET name_ = @name_, 
-			aged = @aged, 
-			idSupplier = @idSupplier, 
-			presentation = @presentation, 
-			currency = @currency, 
-			cost_ = @cost_, 
-			idTypeProduct = @idTypeProduct, 
-			special = @special
-		WHERE name_ = @nameOld
+		SET name_ = _name_, 
+			aged = _aged, 
+			idSupplier = _idSupplier, 
+			presentation = _presentation, 
+			currency = _currency, 
+			cost_ = _cost_, 
+			idTypeProduct = _idTypeProduct, 
+			special = _special
+		WHERE name_ = _nameOld
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -69,14 +70,14 @@ $$
 $$ 
 LANGUAGE plpgsql;
 
-
-CREATE OR REPLACE PROCEDURE DeleteProduct(@name_ VARCHAR(16))  
+--delete a product
+CREATE OR REPLACE PROCEDURE DeleteProduct(_name_ VARCHAR(16))  
 AS 
 $$
 	BEGIN
 		UPDATE Producto
 		SET activate_ = 0, 
-		WHERE name_ = @nameOld
+		WHERE name_ = _nameOld
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -86,7 +87,11 @@ $$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE PROCEDURE GetProductsByType(@name_, VARCHAR(16), @special BOOLEAN)  
+
+
+
+--shows the products that equals the input type
+CREATE OR REPLACE PROCEDURE GetProductsByType(_name_, VARCHAR(16), _special BOOLEAN)  
 AS 
 $$
 	BEGIN
@@ -98,12 +103,12 @@ $$
 			p.presentation,
 			p.currency,
 			p.cost_,
-			@name_,
+			_name_,
 		FROM Product p, ProductType t, Supplier s
-		WHERE t.name_ = @name_
+		WHERE t.name_ = _name_
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = @special OR p.special = 0)
+		AND (p.special = _special OR p.special = 0)
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -113,34 +118,8 @@ $$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE PROCEDURE GetProductsByCost(@cost_, INT, @special BOOLEAN)  
-AS 
-$$
-	BEGIN
-		SELECT 
-			p.id,
-			p.name_,
-			p.aged,
-			s.name_,
-			p.presentation,
-			p.currency,
-			p.cost_,
-			t.name_,
-		FROM Product p, ProductType t, Supplier s
-		WHERE p.cost_ = cost_
-		AND p.idTypeProduct = t.id
-		AND s.id = p.idSupplier
-		AND (p.special = @special OR p.special = 0)
-	EXCEPTION
-		WHEN no_data_found THEN --Si no encuentra datos
-			--Mostrar error
-			RAISE EXCEPTION 'Error al procesar :(';
-	END;
-$$ 
-LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE PROCEDURE GetProductsByCost(@cost_, INT, @special BOOLEAN)  
+-- shows the products that equals the input cost
+CREATE OR REPLACE PROCEDURE GetProductsByCost(_cost_, INT, _special BOOLEAN)  
 AS 
 $$
 	BEGIN
@@ -157,7 +136,7 @@ $$
 		WHERE p.cost_ = cost_
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = @special OR p.special = 0)
+		AND (p.special = _special OR p.special = 0)
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -167,7 +146,8 @@ $$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE PROCEDURE GetProductsByBestSeller(@special BOOLEAN)
+--Shows the best selling products
+CREATE OR REPLACE PROCEDURE GetProductsByBestSeller(_special BOOLEAN)
 AS 
 $$
 	BEGIN
@@ -184,7 +164,7 @@ $$
 		FROM Product p, ProductType t, Supplier s, Sale v
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = @special OR p.special = 0)
+		AND (p.special = _special OR p.special = 0)
 		AND v.idProduct = p.id
 		ORDER BY Sales DESC
 		

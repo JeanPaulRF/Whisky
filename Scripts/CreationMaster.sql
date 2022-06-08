@@ -60,6 +60,8 @@ CREATE TABLE WorkerType (
 
 CREATE TABLE Sale (
 	id serial PRIMARY KEY,
+	idStore INT,
+	idClient INT,
 	idProduct INT,
 	quantity INT,
 	date_ DATE,
