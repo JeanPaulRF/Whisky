@@ -180,3 +180,23 @@ $$
 	END;
 $$ 
 LANGUAGE plpgsql;
+
+
+--Shows the best selling products
+CREATE OR REPLACE PROCEDURE SetReview
+(_username VARCHAR(32), _review VARCHAR(256), _idProduct INT, _stars INT, _storeNameUser VARCHAR(32))
+AS 
+$$
+	BEGIN
+		INSERT INTO Review(idProduct, userName, commentary, date_, stars, storeNameUser)
+		SELECT _idProduct, _userName, _review, NOW()::DATE, _stars, _storenameUser)
+		
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+

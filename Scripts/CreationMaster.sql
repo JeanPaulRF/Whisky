@@ -74,10 +74,11 @@ CREATE TABLE Sale (
 CREATE TABLE Review (
 	id serial PRIMARY KEY,
 	idProducto INT,
-	idCliente INT,
+	userName VARCHAR(32),
 	commentary VARCHAR(256),
 	date_ DATE,
-	stars INT
+	stars INT,
+	storeNameUser VARCHAR(32)
 );
 
 
