@@ -1,12 +1,3 @@
-<?php
-
- include_once("conexion.php");
- Cconexion::ConexionDB();
-
-?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -74,7 +65,7 @@ https://templatemo.com/tm-551-stand-blog
                 <a class="nav-link" href="post-details.html">reviews</a>
               </li>
               <li class="nav-item active">
-                <a class="nav-link" href="contact.html">Sign in</a>
+                <a class="nav-link" href="administration.html">Administration</a>
               </li>
             </ul>
           </div>
@@ -90,8 +81,8 @@ https://templatemo.com/tm-551-stand-blog
           <div class="row">
             <div class="col-lg-12">
               <div class="text-content">
-                <h4>Sign in</h4>
-                <h2>let’s stay in touch!</h2>
+                <h4>Administration</h4>
+                <h2>Insert a new Suplier</h2>
               </div>
             </div>
           </div>
@@ -112,80 +103,30 @@ https://templatemo.com/tm-551-stand-blog
                 <div class="col-lg-8">
                   <div class="sidebar-item contact-form">
                     <div class="sidebar-heading">
-                      <h2>Sign in to get a lot of benefits</h2>
+                      <h2>Insert a new suplier here</h2>
                     </div>
                     <div class="content">
-                      <form id="contact" action="" method="post">
+                      
                         
-                        <div class="row">
+                        <div class="row"> 
+                            <style type="text/css">
+                              h6  {color: green;
+                                  background-color: white;
+                                  text-align: left;
+                                  padding: 15px;}
+                            </style>
                             <div class="col-md-6 col-sm-12">
                               <fieldset>
-                                <input name="name" type="text" id="name" placeholder="Name" required="">
-                              </fieldset>
-                            </div>
-
-                            <div class="col-md-6 col-sm-12">
+                                <h6 padding>Supplier added.<h6>
+                              </fieldset>                             
+                            </div>                         
+                            <div class="col-lg-12">
                               <fieldset>
-                                <input name="email" type="text" id="email" placeholder="Email" required="">
+                                <button type="submit" value="Save" id="form-submit" name="save" class="main-button">back to menu</button>
                               </fieldset>
                             </div>
-
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="telephone" type="text" id="telephone" placeholder="Telephone" required="">
-                            </fieldset>
-                          </div>
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <label for="tier" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px" >Choose a Tier:</label>
-                                <select name="tier" id="tier" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;">
-                                  <option value="volvo">Short Glass</option>
-                                  <option value="saab">Gleincairn</option>
-                                  <option value="mercedes">Master Distiller</option>
-                                </select>
-                            </fieldset>
-                          </div>
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="email" type="text" id="email" placeholder="Email" required="">
-                            </fieldset>
-                          </div>
-
-                          
-                          
-
-                          
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="username" type="text" id="sername" placeholder="User Name" required="">
-                            </fieldset>
-                          </div>
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="password" type="password" id="password" placeholder="password  " required="">
-                            </fieldset>
-                          </div>
-
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <label for="cars" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px ;" >
-                                Location 1:
-                              </label>
-                                <select name="cars" id="cars" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
-                                  <option value="volvo">USA</option>
-                                  <option value="saab">Scotland</option>
-                                  <option value="mercedes">Ireland</option>
-                                </select>
-                            </fieldset>
-                          </div>   
-                                                
-                          <div class="col-lg-12">
-                            <fieldset>
-                              <button type="submit" id="form-submit" class="main-button">Suscribe</button>
-                            </fieldset>
-                          </div>
                         </div>
-                      </form>
+                      
 
 
 
