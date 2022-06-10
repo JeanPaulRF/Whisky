@@ -18,7 +18,7 @@
 			}
 			else
 			{
-			$query = ("Insert into WorkerType(name_) VALUES('$_POST[name]');");
+			$query = ("Insert into Supplier(name_) VALUES('$_POST[name]');");
 			$consulta=pg_query($connexion,$query);
 			pg_close();
 			header("Location: AdminMenu.html");
@@ -44,7 +44,7 @@
 	<form action="" method="post" style="width:40%;margin:0 auto;" enctype="multipart/form-data">	
 	<legend class="text-center header text-success"></legend>
 		<br>
-		<legend class="text-center header text-success">Add a worker type</legend>
+		<legend class="text-center header text-success">Add a new Supplier</legend>
 		<div class="form-group">
 			<label for="nombre">Name</label>
 			<input type="text" class="form-control" name="name">

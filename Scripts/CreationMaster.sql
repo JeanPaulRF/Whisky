@@ -51,7 +51,7 @@ CREATE TABLE Image_ (
 );
 
 CREATE TABLE ProductType (
-	id INT PRIMARY KEY,
+	id serial PRIMARY KEY,
 	name_ VARCHAR(64)
 );
 
@@ -115,12 +115,12 @@ REFERENCES Product (id);
 
 
 --Insert Product Types
-INSERT INTO ProductType(id, name_) VALUES(1, 'Single Malt');
-INSERT INTO ProductType(id, name_) VALUES(2, 'Blended Scotch');
-INSERT INTO ProductType(id, name_) VALUES(3, 'Irish');
-INSERT INTO ProductType(id, name_) VALUES(4, 'Blended Malt');
-INSERT INTO ProductType(id, name_) VALUES(5, 'Bourbon');
-INSERT INTO ProductType(id, name_) VALUES(6, 'Tennessee Whiskey');
+INSERT INTO ProductType(name_) VALUES('Single Malt');
+INSERT INTO ProductType(name_) VALUES('Blended Scotch');
+INSERT INTO ProductType(name_) VALUES('Irish');
+INSERT INTO ProductType(name_) VALUES('Blended Malt');
+INSERT INTO ProductType(name_) VALUES('Bourbon');
+INSERT INTO ProductType(name_) VALUES('Tennessee Whiskey');
 
 --Insert Suppliers
 INSERT INTO Supplier(name_) VALUES('bimbo');

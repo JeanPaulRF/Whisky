@@ -8,7 +8,7 @@
 			$pass='atomico';
 			$connexion = pg_connect("host=$host dbname=$bd user=$user password=$pass");
 
-			$queryControl = "SELECT name_ FROM WorkerType WHERE name_ = '$_POST[name]';";
+			$queryControl = "SELECT name_ FROM ProductType WHERE name_ = '$_POST[name]';";
 			$consulta=pg_query($connexion,$queryControl);
 			$name = pg_fetch_array($consulta);
 			if($name['name_'] == $_POST['name'] )
@@ -18,7 +18,7 @@
 			}
 			else
 			{
-			$query = ("Insert into WorkerType(name_) VALUES('$_POST[name]');");
+			$query = ("Insert into ProductType(name_) VALUES('$_POST[name]');");
 			$consulta=pg_query($connexion,$query);
 			pg_close();
 			header("Location: AdminMenu.html");
@@ -44,16 +44,17 @@
 	<form action="" method="post" style="width:40%;margin:0 auto;" enctype="multipart/form-data">	
 	<legend class="text-center header text-success"></legend>
 		<br>
-		<legend class="text-center header text-success">Add a worker type</legend>
+		<legend class="text-center header text-success">Add a new Product Type</legend>
+
 		<div class="form-group">
 			<label for="nombre">Name</label>
 			<input type="text" class="form-control" name="name">
 		</div>
-		<div class="form-group">
-			
+
+		<div class="form-group">		
 				<input type="submit" class="btn btn-success form-control" name="save" value="Save">
-			
 		</div>
+
 		<div class="form-group">
 		<a href="adminMenu.html">
 			<input type="button" value="Back to menu">
