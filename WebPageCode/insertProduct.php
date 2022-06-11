@@ -20,8 +20,8 @@
 			$consultInsert=pg_query($conexion,$queryInsert);
 			pg_close();
 
-			//header("Location: AdminMenu.html");
-			//exit();
+			header("Location: AdminMenu.html");
+			exit();
 	}
 
 ?>

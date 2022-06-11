@@ -200,3 +200,31 @@ $$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE PROCEDURE insertImage(_image_ bytea, _idProduct integer)
+AS
+$$
+	BEGIN
+		insert into image_(idProduct,image_) VALUES (_idProduct, _image_);
+	END;
+$$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
