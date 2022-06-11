@@ -200,6 +200,7 @@ $$
 LANGUAGE plpgsql;
 
 
+
 CREATE OR REPLACE PROCEDURE insertImage(_image_ bytea, _idProduct integer)
 AS
 $$
@@ -226,5 +227,7 @@ LANGUAGE plpgsql;
 
 
 
+=======
+>>>>>>> Stashed changes
 
 

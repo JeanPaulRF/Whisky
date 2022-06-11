@@ -62,9 +62,10 @@ CREATE TABLE WorkerType (
 
 CREATE TABLE Sale (
 	id serial PRIMARY KEY,
-	idStore INT,
+	storeName VARCHAR(64),
 	idClient INT,
 	idProduct INT,
+	idWorker INT,
 	quantity INT,
 	date_ DATE,
 	deliveryCost INT
@@ -79,6 +80,27 @@ CREATE TABLE Review (
 	date_ DATE,
 	stars INT,
 	storeNameUser VARCHAR(32)
+);
+
+
+CREATE TABLE EvaluationWorker(
+	id serial PRIMARY KEY,
+	idWorker INT,
+	userName VARCHAR(32),
+	commentary VARCHAR(256),
+	date_ DATE,
+	stars INT,
+	storeNameUser VARCHAR(32)
+);
+
+
+CREATE TABLE Delivery(
+	id serial PRIMARY KEY,
+	idWorker INT,
+	idClient INT,
+	idSale INT,
+	storeName VARCHAR(32),
+	cost_ INT
 );
 
 
@@ -112,6 +134,36 @@ ALTER TABLE Sale
 ADD CONSTRAINT fk_Sale_Product
 FOREIGN KEY (idProduct) 
 REFERENCES Product (id);
+
+--Sale->Worker
+ALTER TABLE Sale
+ADD CONSTRAINT fk_Sale_Worker
+FOREIGN KEY (idWorker) 
+REFERENCES Worker (id);
+
+--Review->Product
+ALTER TABLE Review
+ADD CONSTRAINT fk_Review_Product
+FOREIGN KEY (idProduct) 
+REFERENCES Product (id);
+
+--EvaluationWorker->Worker
+ALTER TABLE EvaluationWorker
+ADD CONSTRAINT fk_EvaluationWorker_Worker
+FOREIGN KEY (idWorker) 
+REFERENCES Worker (id);
+
+--Delivery->Worker
+ALTER TABLE Delivery
+ADD CONSTRAINT fk_Delivery_Worker
+FOREIGN KEY (idWorker) 
+REFERENCES Worker (id);
+
+--Delivery->Sale
+ALTER TABLE Delivery
+ADD CONSTRAINT fk_Delivery_Sale
+FOREIGN KEY (idSale) 
+REFERENCES Worker (id);
 
 
 --Insert Product Types

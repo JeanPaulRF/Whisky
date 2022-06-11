@@ -277,7 +277,63 @@ GO
 
 
 
+CREATE PROCEDURE SetDelivery(
+	@idClient INT,
+	@idSale INT,
+	@storeName VARCHAR(32),
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+			
+			DECLARE @idWorker INT
+			SET @idWorker = (SELECT * FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT COUNT(*) FROM Worker'))
+			SET @idWorker = (SELECT FLOOR(RAND()*(@idWorker-1+1))+1)
 
+			DECLARE @distante FLOAT
+
+			IF @storeName = 'Scotland'
+				BEGIN
+				SET @distante = 
+				(SELECT c.location1.STDistance(s.location1) 
+				FROM [ScotlandStore].dbo.Store s, Client c
+				WHERE c.id=@idClient AND s.name_=@storeName)
+				END;
+			ELSE
+				BEGIN
+				IF @storeName = 'Usa'
+					BEGIN
+					SET @distante = 
+					(SELECT c.location1.STDistance(s.location1) 
+					FROM [USAStore].dbo.Store s, Client c
+					WHERE c.id=@idClient AND s.name_=@storeName)
+					END;
+				ELSE
+					BEGIN
+					SET @distante = 
+					(SELECT c.location1.STDistance(s.location1) 
+					FROM [IrelandStore].dbo.Store s, Client c
+					WHERE c.id=@idClient AND s.name_=@storeName)
+					END;
+				END;
+
+			INSERT INTO OPENQUERY([MASTERDBPOSTGRES], 'SELECT idWorker, idClient, idSale, storeName, cost_ FROM Sale')
+					VALUES (@idWorker, @idClient, @idSale, @storeName, @distante*10)
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+
+END;
+GO
 
 --PRODUCTS
 
