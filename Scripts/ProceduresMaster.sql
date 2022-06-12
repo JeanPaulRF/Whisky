@@ -4,6 +4,7 @@
 --Postgres
 --CRUD Product
 
+--Procedure that createa a product
 CREATE OR REPLACE PROCEDURE CreateProduct(
 	_name_ VARCHAR(16),
 	_aged VARCHAR(16),
@@ -81,7 +82,7 @@ AS
 $$
 	BEGIN
 		UPDATE Producto
-		SET activate_ = 0, 
+		SET activate_ = 0, --set it inactive
 		WHERE name_ = _nameOld
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -95,7 +96,7 @@ LANGUAGE plpgsql;
 
 
 
---shows the products that equals the input type
+--shows the products by type
 CREATE OR REPLACE PROCEDURE GetProductsByType(_name_, VARCHAR(16), _special BOOLEAN)  
 AS 
 $$
@@ -113,7 +114,7 @@ $$
 		WHERE t.name_ = _name_
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = _special OR p.special = 0)
+		AND (p.special = _special OR p.special = 0) --check the suscription whit the special products
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -123,7 +124,7 @@ $$
 LANGUAGE plpgsql;
 
 
--- shows the products that equals the input cost
+-- shows the products by cost
 CREATE OR REPLACE PROCEDURE GetProductsByCost(_cost_, INT, _special BOOLEAN)  
 AS 
 $$
@@ -141,7 +142,7 @@ $$
 		WHERE p.cost_ = cost_
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = _special OR p.special = 0)
+		AND (p.special = _special OR p.special = 0) --check the suscription whit the special products
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -157,7 +158,7 @@ AS
 $$
 	BEGIN
 		SELECT 
-			SUM(v.quantity)*COUNT(id FROM Sale WHERE id = p.id) as Sales
+			SUM(v.quantity)*COUNT(id FROM Sale WHERE id = p.id) as Sales --number of sales of the product
 			p.id,
 			p.name_,
 			p.aged,
@@ -169,9 +170,9 @@ $$
 		FROM Product p, ProductType t, Supplier s, Sale v
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = _special OR p.special = 0)
+		AND (p.special = _special OR p.special = 0) --check the suscription whit the special products
 		AND v.idProduct = p.id
-		ORDER BY Sales DESC
+		ORDER BY Sales DESC -- order it by the number of sales
 		
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -182,7 +183,7 @@ $$
 LANGUAGE plpgsql;
 
 
---Shows the best selling products
+--Create the review of a product
 CREATE OR REPLACE PROCEDURE SetReview
 (_username VARCHAR(32), _review VARCHAR(256), _idProduct INT, _stars INT, _storeNameUser VARCHAR(32))
 AS 
@@ -200,7 +201,7 @@ $$
 LANGUAGE plpgsql;
 
 
-
+--Insert an image of a product
 CREATE OR REPLACE PROCEDURE insertImage(_image_ bytea, _idProduct integer)
 AS
 $$

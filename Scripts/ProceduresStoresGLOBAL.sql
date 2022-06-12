@@ -2,7 +2,7 @@ USE ScotlandStore
 GO
 
 --PROXIMITY
-
+--shows all the invetories by distance
 CREATE PROCEDURE GetEntireInventory(
 	@uidClient int,
 	@special bit,
@@ -13,6 +13,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION T1
 
+			--temp table to get all the inventories
 			DECLARE @temp TABLE(
 			id INT,
 			quantity INT,
@@ -20,25 +21,29 @@ BEGIN
 			nameStore VARCHAR(32),
 			distance FLOAT)
 
+			--get the scotland inventory
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
 			WHERE i.idStore=s.id
 
+			--get the usa inventory
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get the ireland inventory
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get the client suscription
 			DECLARE @idSuscription INT
 			SET @idSuscription = (SELECT idSuscription FROM Client WHERE uid=@uidClient)
 
-			IF 2 > @idSuscription --if has none or low suscription
+			IF 2 > @idSuscription --if has none or low suscription shows normal products from temp
 				BEGIN
 				SELECT i.nameStore,
 					i.distance,
@@ -62,7 +67,7 @@ BEGIN
 				AND i2.idProduct = p.id
 				ORDER BY i.distance ASC
 				END
-			ELSE --if has high suscription
+			ELSE --if has high suscription shows normal and special products from temp
 				BEGIN
 				SELECT i.nameStore,
 					i.distance,
@@ -99,6 +104,7 @@ BEGIN
 END;
 GO
 
+--shows the products by name and the distance
 CREATE PROCEDURE GetProductByName(
 	@uidClient int,
 	@nameProduct VARCHAR(32),
@@ -110,6 +116,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION T1
 
+			--temp table to get all the products whit the same name
 			DECLARE @temp TABLE(
 			id INT,
 			quantity INT,
@@ -117,25 +124,29 @@ BEGIN
 			nameStore VARCHAR(32),
 			distance FLOAT)
 
+			--get the products from scotland
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
 			WHERE i.idStore=s.id
 
+			--get the products from usa
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get the products from ireland
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get the suscription
 			DECLARE @idSuscription INT
 			SET @idSuscription = (SELECT idSuscription FROM Client WHERE uid=@uidClient)
 
-			IF 2 > @idSuscription --if has none or low suscription
+			IF 2 > @idSuscription --if has none or low suscription shows normal products
 				BEGIN
 				SELECT i.nameStore,
 					i.distance,
@@ -160,7 +171,7 @@ BEGIN
 				AND i2.idProduct = p.id
 				ORDER BY i.distance ASC
 				END
-			ELSE --if has high suscription
+			ELSE --if has high suscription shows normal and special products
 				BEGIN
 				SELECT i.nameStore,
 					i.distance,
@@ -198,7 +209,7 @@ BEGIN
 END;
 GO
 
-
+--show products by name and distance
 CREATE PROCEDURE GetProductByType(
 	@uidClient int,
 	@typeProduct VARCHAR(32),
@@ -210,6 +221,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION T1
 
+			--temp table to get all the products and distance
 			DECLARE @temp TABLE(
 			id INT,
 			quantity INT,
@@ -217,21 +229,25 @@ BEGIN
 			nameStore VARCHAR(32),
 			distance FLOAT)
 
+			--get the products from scotland
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
 			WHERE i.idStore=s.id
 
+			--get the products from usa
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get the products from ireland
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get suscription of the client
 			DECLARE @idSuscription INT
 			SET @idSuscription = (SELECT idSuscription FROM Client WHERE uid=@uidClient)
 
@@ -299,7 +315,7 @@ END;
 GO
 
 
-
+--shows the products by cost and distance
 CREATE PROCEDURE GetProductByCost(
 	@uidClient int,
 	@cost INT,
@@ -311,6 +327,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION T1
 
+			--temp table to get all the products
 			DECLARE @temp TABLE(
 			id INT,
 			quantity INT,
@@ -318,21 +335,25 @@ BEGIN
 			nameStore VARCHAR(32),
 			distance FLOAT)
 
+			--get the products from scotland
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
 			WHERE i.idStore=s.id
 
+			--get the products from usa
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get the products from ireland
 			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
 			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
 			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
 			WHERE i.idStore=s.id
 
+			--get the client suscription
 			DECLARE @idSuscription INT
 			SET @idSuscription = (SELECT idSuscription FROM Client WHERE uid=@uidClient)
 
