@@ -3,9 +3,10 @@ GO
 
 -- USER
 --create a user
-CREATE PROCEDURE CreateUser(
+
+CREATE PROCEDURE CreateUser_(
 	@username VARCHAR(16),
-	@pass VARBINARY(64),
+	@pass VARCHAR(64),
 	@key VARCHAR(64),
 	@administrator BINARY,
 	@idClient INT,
@@ -18,10 +19,10 @@ BEGIN
 		BEGIN TRANSACTION T1
 
 			DECLARE @pssb VARBINARY(64)
-			SET @pssb = (ENCRYPTBYPASSPHRASE(@key, @pssb))
+			SET @pssb = (ENCRYPTBYPASSPHRASE(@key, @pass))
 
-			INSERT INTO User_(username, @pssb, key_, administrator, idClient, idUserType)
-			VALUES(@username, @pass, @key, @administrator, @idClient, @idUserType)
+			INSERT INTO User_(username, pass, key_, administrator, idClient, idUserType)
+			VALUES(@username, @pssb, @key, @administrator, @idClient, @idUserType)
 
 		COMMIT TRANSACTION T1
 	 END TRY
@@ -34,6 +35,7 @@ BEGIN
 	 SET NOCOUNT OFF
 END;
 GO
+
 
 --shows a user
 CREATE PROCEDURE ReadUser(

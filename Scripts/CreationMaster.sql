@@ -74,7 +74,7 @@ CREATE TABLE Sale (
 
 CREATE TABLE Review (
 	id serial PRIMARY KEY,
-	idProducto INT,
+	idProduct INT,
 	userName VARCHAR(32),
 	commentary VARCHAR(256),
 	date_ DATE,
@@ -175,7 +175,14 @@ INSERT INTO ProductType(name_) VALUES('Bourbon');
 INSERT INTO ProductType(name_) VALUES('Tennessee Whiskey');
 
 --Insert Suppliers
-INSERT INTO Supplier(name_) VALUES('bimbo');
+INSERT INTO Supplier(name_) VALUES('Global whisky');
+INSERT INTO Supplier(name_) VALUES('European whisky');
+INSERT INTO Supplier(name_) VALUES('Good whisky');
+
+--Insert TypeWorker
+INSERT INTO WorkerType(name_) VALUES('Boss');
+INSERT INTO WorkerType(name_) VALUES('Superior');
+INSERT INTO WorkerType(name_) VALUES('Normal');
 
 
 
