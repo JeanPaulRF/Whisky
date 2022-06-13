@@ -20,8 +20,8 @@ BEGIN
 			DECLARE @pssb VARBINARY(64)
 			SET @pssb = (ENCRYPTBYPASSPHRASE(@key, @pssb))
 
-			INSERT INTO User_(username, @pssb, key_, administrator, idClient, idUserType)
-			VALUES(@username, @pass, @key, @administrator, @idClient, @idUserType)
+			INSERT INTO User_(username, pass, key_, administrator, idClient, idUserType)
+			VALUES(@username, @pssb, @key, @administrator, @idClient, @idUserType)
 
 		COMMIT TRANSACTION T1
 	 END TRY

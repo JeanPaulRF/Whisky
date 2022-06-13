@@ -1,7 +1,60 @@
 <?php
 
- include_once("conexion.php");
- Cconexion::ConexionDB();
+ //include_once("conexion.php");
+ //Cconexion::ConexionDB();
+  
+
+  if(isset($_POST['save']) && $_POST['save']=='Save')
+	{ 
+
+    $host = 'localhost';
+    $dbname = 'ScotlandStore';
+    $username = 'sa';
+    $password= '12345678';
+    $puerto = 62727;
+    $serverName = "PINK-KIRBY\ENTERPRISE2, 62727";
+  
+    $connectionInfo = array( "Database"=>$dbname, "UID"=>$username, "PWD"=>$password);
+    $conexion = sqlsrv_connect( $serverName, $connectionInfo);
+
+    $queryInsert = "INSERT INTO Client(name_, uid, email, telephone, quantityBuy, idSuscription) VALUES (?,?,?,?,?,?)";
+
+    $params = array($_POST['name'], $_POST['uid'], $_POST['email'],$_POST['telephone'], 0, $_POST['tier']);
+    $consultInsert = sqlsrv_query($conexion,$queryInsert,$params);
+
+    if ($consultInsert)
+    {  
+      //echo "Row successfully inserted.\n"; 
+      $queryGetID = "SELECT TOP 1 * FROM client ORDER BY id DESC";
+      $consultUserId=sqlsrv_query($conexion,$queryGetID);
+      $id = sqlsrv_fetch_array($consultUserId);
+      //echo "ID del cliente: ",$id['id'];
+      $queryInsertUser = "EXEC CreateUser '$_POST[username]', '$_POST[password]', '$_POST[key]', 0, $id, 4, 0";
+      $consultInsertUser = sqlsrv_query($conexion,$queryInsertUser);
+      if ($consultInsertUser)
+      {
+        echo "Row successfully inserted.\n"; 
+        
+      } 
+      else
+      {  
+        echo "Row insertion failed.\n";  
+        die(print_r(sqlsrv_errors(), true));    
+      } 
+
+    }
+    else
+    {  
+      echo "Row insertion failed.\n";  
+      die(print_r(sqlsrv_errors(), true));  
+    }  
+
+
+    //$queryTest = ("SELECT * from UserType;");
+    //$consultTest=sqlsrv_query($conexion,$queryTest);
+    //$registro = sqlsrv_fetch_array($consultTest);
+    //echo $registro['name_'];
+  }
 
 ?>
 
@@ -100,12 +153,9 @@ https://templatemo.com/tm-551-stand-blog
     </div>
     
     <!-- Banner Ends Here -->
-
-
     <section class="contact-us">
       <div class="container">
-        <div class="row">
-        
+        <div class="row">     
           <div class="col-lg-12">
             <div class="down-contact">
               <div class="row">
@@ -115,9 +165,9 @@ https://templatemo.com/tm-551-stand-blog
                       <h2>Sign in to get a lot of benefits</h2>
                     </div>
                     <div class="content">
-                      <form id="contact" action="" method="post">
-                        
-                        <div class="row">
+
+                      <form action="" method="post">
+                          <div class="row">
                             <div class="col-md-6 col-sm-12">
                               <fieldset>
                                 <input name="name" type="text" id="name" placeholder="Name" required="">
@@ -139,25 +189,22 @@ https://templatemo.com/tm-551-stand-blog
                             <fieldset>
                               <label for="tier" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px" >Choose a Tier:</label>
                                 <select name="tier" id="tier" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;">
-                                  <option value="volvo">Short Glass</option>
-                                  <option value="saab">Gleincairn</option>
-                                  <option value="mercedes">Master Distiller</option>
+                                <option value="0">None</option>
+                                  <option value="1">Short Glass</option>
+                                  <option value="2">Gleincairn</option>
+                                  <option value="3">Master Distiller</option>
                                 </select>
                             </fieldset>
                           </div>
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
-                              <input name="email" type="text" id="email" placeholder="Email" required="">
+                              <input name="uid" type="text" id="uid" placeholder="uid" required="">
                             </fieldset>
                           </div>
-
-                          
-                          
-
-                          
+             
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
-                              <input name="username" type="text" id="sername" placeholder="User Name" required="">
+                              <input name="username" type="text" id="username" placeholder="User Name" required="">
                             </fieldset>
                           </div>
                           <div class="col-md-6 col-sm-12">
@@ -168,10 +215,16 @@ https://templatemo.com/tm-551-stand-blog
 
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
+                              <input name="key" type="text" id="key" placeholder="Key" required="">
+                            </fieldset>
+                          </div>
+
+                          <div class="col-md-6 col-sm-12">
+                            <fieldset>
                               <label for="cars" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px ;" >
                                 Location 1:
                               </label>
-                                <select name="cars" id="cars" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
+                                <select name="location" id="location" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
                                   <option value="volvo">USA</option>
                                   <option value="saab">Scotland</option>
                                   <option value="mercedes">Ireland</option>
@@ -181,7 +234,7 @@ https://templatemo.com/tm-551-stand-blog
                                                 
                           <div class="col-lg-12">
                             <fieldset>
-                              <button type="submit" id="form-submit" class="main-button">Suscribe</button>
+                              <button type="submit" name="save" value="Save" id="form-submit" class="main-button">Suscribe</button>
                             </fieldset>
                           </div>
                         </div>
@@ -205,7 +258,7 @@ https://templatemo.com/tm-551-stand-blog
                           <span>PHONE NUMBER</span>
                         </li>
                         <li>
-                          <h5>info@company.com</h5>
+                          <h5>info@whisky.com</h5>
                           <span>EMAIL ADDRESS</span>
                         </li>
                         <li>

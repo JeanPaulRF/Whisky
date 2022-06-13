@@ -49,9 +49,9 @@ CREATE TABLE UserType (
 
 CREATE TABLE User_ (
 	[id] INT IDENTITY(1, 1),
-	[username] VARCHAR(16),
-	[pass] VARBINARY(64),
-	[key_] VARCHAR(64),
+	[username] VARCHAR(16), --
+	[pass] VARBINARY(64), --
+	[key_] VARCHAR(64), --
 	[administrator] BINARY(1),
 	[idClient] INT,
 	[idUserType] INT,
@@ -61,12 +61,12 @@ CREATE TABLE User_ (
 
 CREATE TABLE Client (
 	[id] INT IDENTITY(1, 1),
-	[name_] VARCHAR(64),
-	[uid] VARCHAR(16),
-	[email] VARCHAR(64),
-	[telephone] VARCHAR(16),
-	[quantityBuy] INT,
-	[idSuscription] INT,
+	[name_] VARCHAR(64), --
+	[uid] VARCHAR(16),  --
+	[email] VARCHAR(64), --
+	[telephone] VARCHAR(16), --
+	[quantityBuy] INT, --
+	[idSuscription] INT, --
 	[location1] GEOGRAPHY,
 	[location2] AS [location1].STAsText(),
 
