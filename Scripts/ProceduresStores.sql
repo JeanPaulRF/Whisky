@@ -73,7 +73,7 @@ BEGIN
 		BEGIN TRANSACTION T1
 			
 			--check the user exists
-			IF EXISTS (SELECT CONVERT(varchar(64), DECRYPTBYPASSPHRASE(key_, pass)) FROM User_ WHERE username=@username)
+			IF EXISTS (SELECT id FROM User_ WHERE username=@username)
 			BEGIN
 				--check the password exists
 				IF @pass = (SELECT CONVERT(varchar(64), DECRYPTBYPASSPHRASE(key_, pass)) FROM User_ WHERE username=@username)

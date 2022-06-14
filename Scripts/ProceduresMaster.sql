@@ -190,7 +190,7 @@ AS
 $$
 	BEGIN
 		INSERT INTO Review(idProduct, userName, commentary, date_, stars, storeNameUser)
-		SELECT _idProduct, _userName, _review, NOW()::DATE, _stars, _storenameUser)
+		SELECT _idProduct, _userName, _review, NOW()::DATE, _stars, _storenameUser
 		
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -213,6 +213,45 @@ LANGUAGE plpgsql;
 
 
 
+--Create evaluation of a worker
+CREATE OR REPLACE PROCEDURE CreateEvaluation
+(_workerName VARCHAR(32), _userName VARCHAR(32), _commentary VARCHAR(256), _stars INT, _storeUserName VARCHAR(32))
+AS 
+$$
+	BEGIN
+		INSERT INTO EvaluationWorker(idWorker, userName, commentary, date_, stars, storeNameUser)
+		SELECT w.id, _userName, _commentary, NOW()::DATE, _stars, _storeUserName
+		FROM Worker w
+		WHERE w._workerName = name_;
+		
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+--Create the review of a product
+CREATE OR REPLACE PROCEDURE CreateAnswerEvaluation
+(_idEvaluation INT, _workerName VARCHAR(32), _commentary VARCHAR(256), _storeUserName VARCHAR(32))
+AS 
+$$
+	BEGIN
+		INSERT INTO EvaluationAnswer(idEvaluation, idWorker, commentary, date_, storeNameUser)
+		SELECT _idEvaluation, w.id, _commentary, NOW()::DATE, _storeUserName
+		FROM Worker w,
+		WHERE w._workerName = name_
+		AND w.idWorkerType = 1;
+		
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
 
 
 
@@ -228,7 +267,5 @@ LANGUAGE plpgsql;
 
 
 
-=======
->>>>>>> Stashed changes
 
 

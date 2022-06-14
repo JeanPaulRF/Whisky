@@ -94,6 +94,16 @@ CREATE TABLE EvaluationWorker(
 );
 
 
+CREATE TABLE EvaluationAnswer(
+	id serial PRIMARY KEY,
+	idEvaluation INT,
+	idWorker INT,
+	commentary VARCHAR(256),
+	date_ DATE,
+	storeNameUser VARCHAR(32)
+)
+
+
 CREATE TABLE Delivery(
 	id serial PRIMARY KEY,
 	idWorker INT,
@@ -150,6 +160,18 @@ REFERENCES Product (id);
 --EvaluationWorker->Worker
 ALTER TABLE EvaluationWorker
 ADD CONSTRAINT fk_EvaluationWorker_Worker
+FOREIGN KEY (idWorker) 
+REFERENCES Worker (id);
+
+--EvaluationAnswer->EvaluationWorker
+ALTER TABLE EvaluationAnswer
+ADD CONSTRAINT fk_EvaluationAnswer_EvaluationWorker
+FOREIGN KEY (idEvaluationWorker) 
+REFERENCES EvaluationWorker (id);
+
+--EvaluationAnswer->Worker
+ALTER TABLE EvaluationAnswer
+ADD CONSTRAINT fk_EvaluationAnswer_Worker
 FOREIGN KEY (idWorker) 
 REFERENCES Worker (id);
 
