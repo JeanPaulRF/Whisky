@@ -110,7 +110,7 @@ BEGIN
 			--if low or non suscription shows normal products
 			IF 2 > (SELECT idSuscription FROM Client WHERE id=@idClient)
 				BEGIN
-				SELECT i.idProduct, 
+				select i.idProduct, 
 					i.quantity,
 					p.name_,
 					p.aged,
@@ -118,20 +118,18 @@ BEGIN
 					p.currency,
 					p.cost_,
 					t.name_,
-					i2.image_
-				FROM Inventory i,
-					[MASTERDBPOSTGRES].MasterDB.[public].product p,
-					[MASTERDBPOSTGRES].MasterDB.[public].producttype t,
-					[MASTERDBPOSTGRES].MasterDB.[public].image_ i2
-				WHERE quantity>0
-				AND p.id = i.idProduct
-				AND p.idTypeProduct = t.id
-				AND p.special = 0 --just the no special
-				AND i2.idProduct = p.id
+					i2.image_ 
+					from inventory i, openquery(MASTERDBPOSTGRES,'Select * from product;') p, 
+						openquery(MASTERDBPOSTGRES,'Select * from producttype;') t, openquery(MASTERDBPOSTGRES,'Select * from image_;') i2 
+					where quantity > 0
+						AND p.id = i.idProduct
+						AND p.idTypeProduct = t.id
+						AND p.special = 0 --just the no special
+						AND i2.idProduct = p.id
 				END
 			ELSE ----if high suscription shows normal and special products
 				BEGIN
-				SELECT i.idProduct, 
+				select i.idProduct, 
 					i.quantity,
 					p.name_,
 					p.aged,
@@ -139,11 +137,9 @@ BEGIN
 					p.currency,
 					p.cost_,
 					t.name_,
-					i2.image_
-				FROM Inventory i,
-					[MASTERDBPOSTGRES].MasterDB.[public].product p,
-					[MASTERDBPOSTGRES].MasterDB.[public].producttype t,
-					[MASTERDBPOSTGRES].MasterDB.[public].image_ i2
+					i2.image_ 
+					from inventory i, openquery(MASTERDBPOSTGRES,'Select * from product;') p, 
+						openquery(MASTERDBPOSTGRES,'Select * from producttype;') t, openquery(MASTERDBPOSTGRES,'Select * from image_;') i2 
 				WHERE quantity>0
 				AND p.id = i.idProduct
 				AND p.idTypeProduct = t.id
@@ -164,10 +160,14 @@ GO
 
 --FUNCTIONALITIES
 --buy a product
-CREATE PROCEDURE BuyWhisky(
-	@idCliente int,
+--FUNCTIONALITIES
+--buy a product
+CREATE or alter PROCEDURE BuyWhisky(
+	@idStore int,
+	@idClient int,
 	@idProduct int,
 	@quantity int,
+	@delivery int,
 	@outCodeResult int OUTPUT)
 AS
 BEGIN
@@ -176,16 +176,16 @@ BEGIN
 		BEGIN TRANSACTION T1
 			
 			--define date
-			DECLARE @fecha DATE = CONVERT(DATE, GETDATE());
-
+			DECLARE @date DATE = CONVERT(DATE, GETDATE());
+			print @date
 			--decrease the quantity of the product
 			UPDATE Inventory
 			SET quantity = quantity-@quantity
 			WHERE idProduct = @idProduct
 
 			--insert the sale
-			INSERT INTO OPENQUERY([MASTERDBPOSTGRES], 'SELECT idProduct, quantity, date_, deliveryCost FROM Sale')
-			VALUES (@idProduct, @quantity, @fecha, 0)
+			insert into openquery(MASTERDBPOSTGRES, 'SELECT idstore, idclient,idproduct,quantity,date_,deliverycost FROM Sale') 
+				VALUES (@idStore,@idClient,@idClient,@quantity,@date,@delivery)
 
 		COMMIT TRANSACTION T1
 	 END TRY
