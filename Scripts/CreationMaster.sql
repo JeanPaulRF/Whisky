@@ -28,7 +28,7 @@ CREATE TABLE Worker (
 
 CREATE TABLE Product (
 	id serial PRIMARY KEY,
-	name_ VARCHAR(16),
+	name_ VARCHAR(64),
 	aged VARCHAR(16),
 	idSupplier INT,
 	presentation VARCHAR(64),

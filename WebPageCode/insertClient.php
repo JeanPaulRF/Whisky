@@ -29,31 +29,29 @@
       $consultUserId=sqlsrv_query($conexion,$queryGetID);
       $id = sqlsrv_fetch_array($consultUserId);
       //echo "ID del cliente: ",$id['id'];
-      $queryInsertUser = "EXEC CreateUser '$_POST[username]', '$_POST[password]', '$_POST[key]', 0, $id, 4, 0";
+      $queryInsertUser = "EXEC CreateUser_ '$_POST[username]', '$_POST[password]', '$_POST[key]', 0, $id[id], 4, 0";
       $consultInsertUser = sqlsrv_query($conexion,$queryInsertUser);
       if ($consultInsertUser)
       {
-        echo "Row successfully inserted.\n"; 
+        //echo "Row successfully inserted.\n"; 
         
       } 
       else
       {  
-        echo "Row insertion failed.\n";  
+        echo "Row insertion failed (user).\n";  
         die(print_r(sqlsrv_errors(), true));    
       } 
 
     }
     else
     {  
-      echo "Row insertion failed.\n";  
+      echo "Row insertion failed (client).\n";  
       die(print_r(sqlsrv_errors(), true));  
     }  
 
 
-    //$queryTest = ("SELECT * from UserType;");
-    //$consultTest=sqlsrv_query($conexion,$queryTest);
-    //$registro = sqlsrv_fetch_array($consultTest);
-    //echo $registro['name_'];
+    header("Location: index.html");
+		exit();
   }
 
 ?>
@@ -111,14 +109,12 @@ https://templatemo.com/tm-551-stand-blog
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
+          <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <a class="nav-link" href="index.html">Home
-                  <span class="sr-only">(current)</span>
-                </a>
+                <a class="nav-link" href="index.html">Home</a>
               </li> 
               <li class="nav-item">
-                <a class="nav-link" href="about.html">Buy</a>
+                <a class="nav-link" href="LogInClient.html">Store</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="suscriptionInformation.html">Suscription</a>
@@ -127,7 +123,12 @@ https://templatemo.com/tm-551-stand-blog
                 <a class="nav-link" href="post-details.html">reviews</a>
               </li>
               <li class="nav-item active">
-                <a class="nav-link" href="contact.html">Sign in</a>
+                <a class="nav-link" href="insertClient.php">Sign in
+                    <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="LogInClient.html">Log in</a>
               </li>
             </ul>
           </div>

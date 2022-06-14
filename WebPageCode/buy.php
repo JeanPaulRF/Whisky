@@ -9,7 +9,7 @@
     <meta name="author" content="TemplateMo">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap" rel="stylesheet">
 
-    <title>Stand Blog - About Page</title>
+    <title>Buy</title>
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="assets/css/fontawesome.css">
     <link rel="stylesheet" href="assets/css/templatemo-stand-blog.css">
     <link rel="stylesheet" href="assets/css/owl.css">
+    <script type="text/javascript" src="result.js" ></script>
 <!--
 
 TemplateMo 551 Stand Blog
@@ -44,28 +45,29 @@ https://templatemo.com/tm-551-stand-blog
     <header class="">
       <nav class="navbar navbar-expand-lg">
         <div class="container">
-          <a class="navbar-brand" href="index.html"><h2>Stand Blog<em>.</em></h2></a>
+          <a class="navbar-brand" href="index.html"><h2>The Whisky Club<em>.</em></h2></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
+          <ul class="navbar-nav ml-auto">
               <li class="nav-item">
-                <a class="nav-link" href="index.html">Home
-                  <span class="sr-only">(current)</span>
-                </a>
+                <a class="nav-link" href="index.html">Home</a>
               </li> 
               <li class="nav-item active">
-                <a class="nav-link" href="about.html">About Us</a>
+                <a class="nav-link" href="LogInClient.html">Store  <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="blog.html">Blog Entries</a>
+                <a class="nav-link" href="suscriptionInformation.html">Suscription</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="post-details.html">Post Details</a>
+                <a class="nav-link" href="post-details.html">reviews</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="contact.html">Contact Us</a>
+                <a class="nav-link" href="insertClient.php">Sign in</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="AdminMenu.html">Log in</a>
               </li>
             </ul>
           </div>
@@ -81,8 +83,8 @@ https://templatemo.com/tm-551-stand-blog
           <div class="row">
             <div class="col-lg-12">
               <div class="text-content">
-                <h4>about us</h4>
-                <h2>more about us!</h2>
+                <h4>Store</h4>
+                <h2>Buy what you want!</h2>
               </div>
             </div>
           </div>
@@ -93,15 +95,47 @@ https://templatemo.com/tm-551-stand-blog
     <!-- Banner Ends Here -->
 
 
-    <section class="about-us">
+    <section class="contact-us">
       <div class="container">
-      	
-        <div class="row">
+        <div class="row">  
           <div class="col-lg-12">
-            <img src="assets/images/about-us.jpg" alt="">
-            <p>Please tell your friends about TemplateMo website. Thank you. You can browse through different categories of templates such as <a rel="nofollow" href="https://templatemo.com/tag/business" target="_parent">business</a>, <a rel="nofollow" href="https://templatemo.com/tag/portfolio" target="_parent">portfolio</a>, <a rel="nofollow" href="https://templatemo.com/tag/restaurant" target="_parent">restaurant</a>, etc. Pellentesque quis luctus libero. Maecenas pretium molestie erat, ac tincidunt leo gravida ac. Cras ullamcorper eu ipsum eu sollicitudin. Fusce vitae commodo turpis. Integer ullamcorper purus nec justo mollis fermentum. Nunc imperdiet erat nec lacinia laoreet. <br><br>Maecenas faucibus ullamcorper felis vitae finibus. Nullam at quam ut lacus aliquam tempor vel sed ipsum. Donec pellentesque tincidunt imperdiet. Mauris sit amet justo vulputate, cursus massa congue, vestibulum odio. Aenean elit nunc, gravida in erat sit amet, feugiat viverra leo. Phasellus interdum, diam commodo egestas rhoncus, turpis nisi consectetur nibh, in vehicula eros orci vel neque.</p>
-          </div>
+            <div class="down-contact">
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="sidebar-item contact-form">
+                    <div class="sidebar-heading">
+                      <h2>Logged User:</h2>
+                    </div>
+                    <div class="content">    
+                      <form id="contact" action="" method="post">
+                        <div class="row">
+                          <div class="col-md-6 col-sm-12">
+                            <fieldset>
+                              <input name="username" type="text" id="result-username" required="" readonly>
+                              <h1>
+                                Name: <span id="result-username" />
+                              </h1>
+                            </fieldset>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>          
         </div>
+      </div>
+    </section>
+
+    <h1>
+                                Name2: <span id ="result-username"/>
+                              </h1>
+
+    <section class="about-us">
+      <div class="container">	
+        
         
         <div class="row">
           <div class="col-lg-6">
