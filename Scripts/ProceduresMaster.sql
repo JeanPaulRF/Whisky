@@ -256,8 +256,26 @@ LANGUAGE plpgsql;
 
 
 
-
-
+--Procedure that create a sale
+CREATE OR REPLACE PROCEDURE BuyWhisky(
+	_storename VARCHAR(32),
+	_idCliente int,
+	_idProduct int,
+	_idWorker int,
+	_quantity int)  
+AS 
+$$
+	BEGIN
+		--insert the sale
+		INSERT INTO Sale (storeName, idClient, idProduct, idWorker, quantity, date_)
+		VALUES (_storename, _idCliente, _idProduct, _idWorker, _quantity, NOW()::DATE)
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
 
 
 

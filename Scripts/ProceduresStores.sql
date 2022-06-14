@@ -162,10 +162,10 @@ BEGIN
 END;
 GO
 
+
 --FUNCTIONALITIES
 --buy a product
-CREATE PROCEDURE BuyWhisky(
-	@idCliente int,
+CREATE PROCEDURE UpdateInventory(
 	@idProduct int,
 	@quantity int,
 	@outCodeResult int OUTPUT)
@@ -174,18 +174,12 @@ BEGIN
 	SET NOCOUNT ON
 	BEGIN TRY
 		BEGIN TRANSACTION T1
-			
-			--define date
-			DECLARE @fecha DATE = CONVERT(DATE, GETDATE());
 
 			--decrease the quantity of the product
 			UPDATE Inventory
 			SET quantity = quantity-@quantity
 			WHERE idProduct = @idProduct
 
-			--insert the sale
-			INSERT INTO OPENQUERY([MASTERDBPOSTGRES], 'SELECT idProduct, quantity, date_, deliveryCost FROM Sale')
-			VALUES (@idProduct, @quantity, @fecha, 0)
 
 		COMMIT TRANSACTION T1
 	 END TRY
@@ -194,9 +188,9 @@ BEGIN
 			ROLLBACK TRAN T1;
 		--INSERT EN TABLA DE ERRORES;
 		SET @outCodeResult=50005;
+		print 'error'
 	 END CATCH
 	 SET NOCOUNT OFF
-
 END;
 GO
 
