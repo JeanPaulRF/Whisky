@@ -28,7 +28,7 @@ CREATE TABLE Worker (
 
 CREATE TABLE Product (
 	id serial PRIMARY KEY,
-	name_ VARCHAR(64),
+	name_ VARCHAR(16),
 	aged VARCHAR(16),
 	idSupplier INT,
 	presentation VARCHAR(64),
@@ -165,7 +165,7 @@ REFERENCES Worker (id);
 --EvaluationAnswer->EvaluationWorker
 ALTER TABLE EvaluationAnswer
 ADD CONSTRAINT fk_EvaluationAnswer_EvaluationWorker
-FOREIGN KEY (idEvaluationWorker) 
+FOREIGN KEY (idEvaluation) 
 REFERENCES EvaluationWorker (id);
 
 --EvaluationAnswer->Worker
@@ -204,6 +204,14 @@ INSERT INTO Supplier(name_) VALUES('Good whisky');
 INSERT INTO WorkerType(name_) VALUES('Boss');
 INSERT INTO WorkerType(name_) VALUES('Superior');
 INSERT INTO WorkerType(name_) VALUES('Normal');
+
+--Insert Worker
+INSERT INTO Worker(salarylocal, salarydolar, name_, uid, email, telephone, idworkertype) 
+VALUES(1000, 600, 'Juan', '12345', 'juan.com', '8888', 3);
+
+--Insert Product
+INSERT INTO Product(name_, aged, idsupplier, presentation, currency, cost_, idtypeproduct, special, active_) 
+VALUES('tequila', '10 years aged', 1, 'glass bottle', 'dolar', 3000, 1, false, true);
 
 
 
