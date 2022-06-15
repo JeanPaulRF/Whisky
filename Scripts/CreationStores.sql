@@ -67,7 +67,7 @@ CREATE TABLE Client (
 	[telephone] VARCHAR(16), --
 	[quantityBuy] INT, --
 	[idSuscription] INT, --
-	[location1] GEOGRAPHY,
+	[location1] GEOMETRY,
 	[location2] AS [location1].STAsText(),
 
 	CONSTRAINT pk_Client PRIMARY KEY (id)
@@ -110,14 +110,18 @@ FOREIGN KEY (idSuscription)
 REFERENCES Suscription (id);
 
 
---Insert Data in Type Tables
+--Insert Data
 
 --Store
 INSERT INTO Store(id, name_, location1)
-VALUES (1, 'Scotland', geometry::STGeomFromText('POLYGON((2 1, 3 1, 3 3, 2 3, 2 1))', 0))
+VALUES (1, 'Scotland', geometry::STGeomFromText('POINT((4 1))', 0))
 
 --Inventory
-
+INSERT INTO Inventory(idStore, idProduct, quantity) VALUES(1, 1, 10)
+INSERT INTO Inventory(idStore, idProduct, quantity) VALUES(1, 2, 10)
+INSERT INTO Inventory(idStore, idProduct, quantity) VALUES(1, 3, 10)
+INSERT INTO Inventory(idStore, idProduct, quantity) VALUES(1, 4, 10)
+INSERT INTO Inventory(idStore, idProduct, quantity) VALUES(1, 5, 10)
 
 --UserTypes
 INSERT INTO UserType(id, name_) VALUES(1, 'admin')
@@ -136,3 +140,20 @@ VALUES(3, 'Tier Gleincairn', 10, 20)
 INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
 VALUES(4, 'Tier Master Distiller', 30, 100)
 
+
+--Clients
+INSERT INTO Client(name_, idSuscription, telephone, uid, email, quantityBuy, location1)
+VALUES('paco', 1, '55665566', '12312312', 'paco@gmail.com', 0, geometry::STGeomFromText('POINT((2 1))', 0))
+INSERT INTO Client(name_, idSuscription, telephone, uid, email, quantityBuy, location1)
+VALUES('juana', 1, '11221122', '45645678', 'juana@gmail.com', 0, geometry::STGeomFromText('POINT((7 7))', 0))
+INSERT INTO Client(name_, idSuscription, telephone, uid, email, quantityBuy, location1)
+VALUES('luisa', 1, '22332233', '32132132', 'luisa@gmail.com', 0, geometry::STGeomFromText('POINT((8 4))', 0))
+
+
+--User
+INSERT INTO User_(idClient, username, idUserType, administrator, pass, key_)
+VALUES(1, 'paco123', 1, 1, 'paco123', 'encription')
+INSERT INTO User_(idClient, username, idUserType, administrator, pass, key_)
+VALUES(1, 'juana123', 3, 0, 'juana123', 'encription')
+INSERT INTO User_(idClient, username, idUserType, administrator, pass, key_)
+VALUES(1, 'luisa123', 4, 0, 'luisa123', 'encription')

@@ -207,12 +207,21 @@ INSERT INTO WorkerType(name_) VALUES('Normal');
 
 --Insert Worker
 INSERT INTO Worker(salarylocal, salarydolar, name_, uid, email, telephone, idworkertype) 
-VALUES(1000, 600, 'Juan', '12345', 'juan.com', '8888', 3);
+VALUES(1000, 600, 'Juan', '108880999', 'juan@gmail.com', '88877766', 3);
+INSERT INTO Worker(salarylocal, salarydolar, name_, uid, email, telephone, idworkertype) 
+VALUES(2000, 900, 'Luis', '213130909', 'luis@gmail.com', '66778899', 2);
+INSERT INTO Worker(salarylocal, salarydolar, name_, uid, email, telephone, idworkertype) 
+VALUES(1500, 1000, 'Ana', '332326565', 'ana@gmail.com', '76768989', 1);
 
 --Insert Product
 INSERT INTO Product(name_, aged, idsupplier, presentation, currency, cost_, idtypeproduct, special, active_) 
-VALUES('tequila', '10 years aged', 1, 'glass bottle', 'dolar', 3000, 1, false, true);
-
-
-
+VALUES('whisky', '10 years aged', 1, 'glass bottle', 'dolar', 3000, 1, true, true);
+INSERT INTO Product(name_, aged, idsupplier, presentation, currency, cost_, idtypeproduct, special, active_) 
+VALUES('tequila', '5 years aged', 2, 'plastic bottle', 'dolar', 2000, 2, true, true);
+INSERT INTO Product(name_, aged, idsupplier, presentation, currency, cost_, idtypeproduct, special, active_) 
+VALUES('ron', '1 years aged', 3, 'barrel', 'dolar', 1000, 3, false, true);
+INSERT INTO Product(name_, aged, idsupplier, presentation, currency, cost_, idtypeproduct, special, active_) 
+VALUES('vodka', '10 months aged', 2, 'glass bottle', 'dolar', 500, 4, false, true);
+INSERT INTO Product(name_, aged, idsupplier, presentation, currency, cost_, idtypeproduct, special, active_) 
+VALUES('beer', '5 months aged', 1, 'six pack', 'dolar', 3500, 5, false, true);
 
