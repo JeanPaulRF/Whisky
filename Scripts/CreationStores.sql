@@ -50,7 +50,7 @@ CREATE TABLE UserType (
 CREATE TABLE User_ (
 	[id] INT IDENTITY(1, 1),
 	[username] VARCHAR(16), --
-	[pass] VARBINARY(64), --
+	[pass] VARCHAR(64), --
 	[key_] VARCHAR(64), --
 	[administrator] BINARY(1),
 	[idClient] INT,
@@ -114,7 +114,7 @@ REFERENCES Suscription (id);
 
 --Store
 INSERT INTO Store(id, name_, location1)
-VALUES (1, 'Scotland', geometry::STGeomFromText('POINT((4 1))', 0))
+VALUES (1, 'Scotland', geometry::STGeomFromText('POINT(4 1)', 0))
 
 --Inventory
 INSERT INTO Inventory(idStore, idProduct, quantity) VALUES(1, 1, 10)
@@ -143,11 +143,11 @@ VALUES(4, 'Tier Master Distiller', 30, 100)
 
 --Clients
 INSERT INTO Client(name_, idSuscription, telephone, uid, email, quantityBuy, location1)
-VALUES('paco', 1, '55665566', '12312312', 'paco@gmail.com', 0, geometry::STGeomFromText('POINT((2 1))', 0))
+VALUES('paco', 1, '55665566', '12312312', 'paco@gmail.com', 0, geometry::STGeomFromText('POINT(2 1)', 0))
 INSERT INTO Client(name_, idSuscription, telephone, uid, email, quantityBuy, location1)
-VALUES('juana', 1, '11221122', '45645678', 'juana@gmail.com', 0, geometry::STGeomFromText('POINT((7 7))', 0))
+VALUES('juana', 1, '11221122', '45645678', 'juana@gmail.com', 0, geometry::STGeomFromText('POINT(7 7)', 0))
 INSERT INTO Client(name_, idSuscription, telephone, uid, email, quantityBuy, location1)
-VALUES('luisa', 1, '22332233', '32132132', 'luisa@gmail.com', 0, geometry::STGeomFromText('POINT((8 4))', 0))
+VALUES('luisa', 1, '22332233', '32132132', 'luisa@gmail.com', 0, geometry::STGeomFromText('POINT(8 4)', 0))
 
 
 --User
