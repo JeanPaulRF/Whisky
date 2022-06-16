@@ -259,7 +259,7 @@ LANGUAGE plpgsql;
 --Procedure that create a sale
 CREATE OR REPLACE PROCEDURE BuyWhisky(
 	_storename VARCHAR(32),
-	_idCliente int,
+	_idClient int,
 	_idProduct int,
 	_idWorker int,
 	_quantity int)  
@@ -268,7 +268,7 @@ $$
 	BEGIN
 		--insert the sale
 		INSERT INTO Sale (storeName, idClient, idProduct, idWorker, quantity, date_)
-		VALUES (_storename, _idCliente, _idProduct, _idWorker, _quantity, NOW()::DATE)
+		VALUES (_storename, _idClient, _idProduct, _idWorker, _quantity, NOW()::DATE);
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -279,6 +279,33 @@ LANGUAGE plpgsql;
 
 
 
+--Procedure that create a delivery
+CREATE OR REPLACE PROCEDURE SetDelivery(
+	_idClient int,
+	_idSale int,
+	_storename VARCHAR(32),
+	_distance real)  
+AS 
+$$
+	BEGIN
+		--looks for a worker for deliver
+		--DECLARE _idWorker INT := ;
+		--SET @idWorker = (SELECT FLOOR(RAND()*(@idWorker-1+1))+1)
+	
+		--insert the delivery
+		INSERT INTO Delivery(idWorker, idClient, idSale, storeName, cost_, distance, _date)
+		VALUES ((SELECT id FROM Worker WHERE idWorkerType=4), _idClient, _idSale, _storename, _distance, NOW()::DATE);
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+
+			
 
 
 

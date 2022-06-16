@@ -109,7 +109,9 @@ CREATE TABLE Delivery(
 	idClient INT,
 	idSale INT,
 	storeName VARCHAR(32),
-	cost_ INT
+	cost_ INT,
+	distance REAL,
+	date_ DATE
 );
 
 
@@ -204,6 +206,7 @@ INSERT INTO Supplier(name_) VALUES('Good whisky');
 INSERT INTO WorkerType(name_) VALUES('Boss');
 INSERT INTO WorkerType(name_) VALUES('Superior');
 INSERT INTO WorkerType(name_) VALUES('Normal');
+INSERT INTO WorkerType(name_) VALUES('Deliver');
 
 --Insert Worker
 INSERT INTO Worker(salarylocal, salarydolar, name_, uid, email, telephone, idworkertype) 

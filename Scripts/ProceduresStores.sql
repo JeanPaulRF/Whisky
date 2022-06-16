@@ -222,9 +222,11 @@ BEGIN
 END;
 GO
 
+
+
 --shows the client suscription
 CREATE PROCEDURE GetSuscription(
-	@uidClient int,
+	@idClient int,
 	@outCodeResult int OUTPUT)
 AS
 BEGIN
@@ -232,7 +234,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION T1
 
-			SELECT idSuscription FROM Client WHERE uid=@uidClient
+			SELECT idSuscription FROM Client WHERE id=@idClient
 
 		COMMIT TRANSACTION T1
 	 END TRY
@@ -246,6 +248,7 @@ BEGIN
 
 END;
 GO
+
 
 --show the user type
 CREATE PROCEDURE GetUserType(
@@ -273,10 +276,10 @@ END;
 GO
 
 
---create a delivery of a sale
-CREATE PROCEDURE SetDelivery(
+
+--get the distance between the client and the store
+CREATE PROCEDURE GetDistance(
 	@idClient INT,
-	@idSale INT,
 	@storeName VARCHAR(32),
 	@outCodeResult int OUTPUT)
 AS
@@ -284,11 +287,6 @@ BEGIN
 	SET NOCOUNT ON
 	BEGIN TRY
 		BEGIN TRANSACTION T1
-			
-			--looks for a random worker for deliver
-			DECLARE @idWorker INT
-			SET @idWorker = (SELECT * FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT COUNT(*) FROM Worker'))
-			SET @idWorker = (SELECT FLOOR(RAND()*(@idWorker-1+1))+1)
 
 			--declare variable for distance
 			DECLARE @distante FLOAT
@@ -319,9 +317,7 @@ BEGIN
 					END;
 				END;
 
-			--insert the delivery
-			INSERT INTO OPENQUERY([MASTERDBPOSTGRES], 'SELECT idWorker, idClient, idSale, storeName, cost_ FROM Sale')
-					VALUES (@idWorker, @idClient, @idSale, @storeName, @distante*10)
+			SELECT @distante
 
 		COMMIT TRANSACTION T1
 	 END TRY
@@ -335,13 +331,4 @@ BEGIN
 
 END;
 GO
-
---PRODUCTS
-
-
-
-
-
-
-
 
