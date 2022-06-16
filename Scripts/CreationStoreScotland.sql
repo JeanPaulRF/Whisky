@@ -27,6 +27,11 @@ CREATE TABLE Inventory (
 	CONSTRAINT pk_Inventory PRIMARY KEY (id)
 );
 
+CREATE TABLE errorInformation
+(
+	[id] INT,
+	[name_] varchar(64)
+);
 
 CREATE TABLE UserType (
 	[id] INT,
@@ -117,6 +122,10 @@ INSERT INTO UserType(id, name_) VALUES(2, 'extern')
 INSERT INTO UserType(id, name_) VALUES(3, 'worker')
 INSERT INTO UserType(id, name_) VALUES(4, 'user')
 
+--Error code
+insert into errorInformation(id,name_) values (0,'The user was found');
+insert into errorInformation(id,name_) values (1,'The password is incorrect');
+insert into errorInformation(id,name_) values (3,'User not found');
 
 --Suscriptions
 INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)

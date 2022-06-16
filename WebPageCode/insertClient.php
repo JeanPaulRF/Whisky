@@ -114,7 +114,7 @@ https://templatemo.com/tm-551-stand-blog
                 <a class="nav-link" href="index.html">Home</a>
               </li> 
               <li class="nav-item">
-                <a class="nav-link" href="LogInClient.html">Store</a>
+                <a class="nav-link" href="LogInClient.php">Store</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="suscriptionInformation.html">Suscription</a>
@@ -128,7 +128,7 @@ https://templatemo.com/tm-551-stand-blog
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="LogInClient.html">Log in</a>
+                <a class="nav-link" href="LogInClient.php">Log in</a>
               </li>
             </ul>
           </div>

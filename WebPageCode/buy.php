@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="assets/css/fontawesome.css">
     <link rel="stylesheet" href="assets/css/templatemo-stand-blog.css">
     <link rel="stylesheet" href="assets/css/owl.css">
-    <script type="text/javascript" src="result.js" ></script>
+    
 <!--
 
 TemplateMo 551 Stand Blog
@@ -30,7 +30,6 @@ https://templatemo.com/tm-551-stand-blog
   </head>
 
   <body>
-
     <!-- ***** Preloader Start ***** -->
     <div id="preloader">
         <div class="jumper">
@@ -111,10 +110,10 @@ https://templatemo.com/tm-551-stand-blog
                         <div class="row">
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
-                              <input name="username" type="text" id="result-username" required="" readonly>
-                              <h1>
-                                Name: <span id="result-username" />
-                              </h1>
+                              <input name="username" type="text" id="username" required="" readonly>
+                              <script>
+                                document.getElementById("username").setAttribute('value',localStorage.getItem("textvalue"));
+                              </script>
                             </fieldset>
                           </div>
                         </div>
@@ -128,11 +127,6 @@ https://templatemo.com/tm-551-stand-blog
         </div>
       </div>
     </section>
-
-    <h1>
-                                Name2: <span id ="result-username"/>
-                              </h1>
-
     <section class="about-us">
       <div class="container">	
         

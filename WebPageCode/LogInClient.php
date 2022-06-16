@@ -1,3 +1,45 @@
+<?php
+if(isset($_POST['save']) && $_POST['save']=='Save')
+{
+  $host = 'localhost';
+  $dbname = 'ScotlandStore';
+  $username = 'sa';
+  $password= '12345678';
+  $puerto = 62727;
+  $serverName = "PINK-KIRBY\ENTERPRISE2, 62727";
+
+  $connectionInfo = array( "Database"=>$dbname, "UID"=>$username, "PWD"=>$password);
+  $conexion = sqlsrv_connect( $serverName, $connectionInfo);
+
+  $query = str_replace("**",$_POST['username'],"EXEC isUserCorrect '**', '++',0");
+  $query2 = str_replace("++",$_POST['password'],$query);
+  $queryCheckUser = $query2;
+
+  $consultCheck= sqlsrv_query($conexion,$queryCheckUser);
+  $registro = sqlsrv_fetch_array($consultCheck);
+  
+  if($registro['id'] == 0)
+  {
+    header("Location: buy.php");
+		exit();
+  }    
+  if($registro['id'] == 1)
+  {
+    echo "<script> alert('Contraseña incorrecta');</script>";
+  } 
+  if($registro['id'] == 3)
+  {
+    echo "<script> alert('Usuario no registrado');</script>";
+  } 
+  
+  
+}
+
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,7 +61,15 @@
     <link rel="stylesheet" href="assets/css/fontawesome.css">
     <link rel="stylesheet" href="assets/css/templatemo-stand-blog.css">
     <link rel="stylesheet" href="assets/css/owl.css">
-    <script type="text/javascript" src="index.js"></script>
+    <script>
+    function passvalues()
+    {
+        var name = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        localStorage.setItem("textvalue",name);
+        return false;
+    }
+    </script>
   </head>
 
   <body>
@@ -48,7 +98,7 @@
                 <a class="nav-link" href="index.html">Home</a>
               </li> 
               <li class="nav-item">
-                <a class="nav-link" href="LogInClient.html">Store</a>
+                <a class="nav-link" href="LogInClient.php">Store</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="suscriptionInformation.html">Suscription</a>
@@ -60,7 +110,7 @@
                 <a class="nav-link" href="insertClient.php">Sign in</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="AdminMenu.html">Log in <span class="sr-only">(current)</span></a>
+                <a class="nav-link active" href="LogInClient.php">Log in <span class="sr-only">(current)</span></a>
               </li>
             </ul>
           </div>
@@ -101,7 +151,7 @@
                       <h2>Log in to view your personal store</h2>
                     </div>
                     <div class="content">    
-                      <form id="contact" action="buy.php" method="get">
+                      <form id="contact" method="post" action="">
                         <div class="row">
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
@@ -115,7 +165,7 @@
                           </div>
                           <div class="col-lg-12">
                             <fieldset>
-                              <button type="submit" id="form-submit" class="main-button" onclick="handleSubmit()">Log in</button>
+                              <button type="submit" name="save" value="Save" id="form-submit" class="main-button" onclick="passvalues(); ">Log in</button>
                             </fieldset>
                           </div>
                         </div>

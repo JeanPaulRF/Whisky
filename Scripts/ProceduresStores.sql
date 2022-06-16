@@ -68,7 +68,7 @@ END;
 GO
 
 --check the user and password
-CREATE PROCEDURE isUserCorrect(
+CREATE or alter PROCEDURE isUserCorrect(
 	@username VARCHAR(16),
 	@pass VARCHAR(64),
 	@outCodeResult int OUTPUT)
@@ -84,13 +84,16 @@ BEGIN
 				--check the password exists
 				IF @pass = (SELECT CONVERT(varchar(64), DECRYPTBYPASSPHRASE(key_, pass)) FROM User_ WHERE username=@username)
 				BEGIN
-				SELECT 1
+				SELECT id from errorInformation where id = 0
 				END
 
 				ELSE
 				BEGIN
-				SELECT 0
+				SELECT id from errorInformation where id = 1
 				END
+			END
+			ELSE
+			BEGINid from errorInformation where id = 3
 			END
 			
 		COMMIT TRANSACTION T1
