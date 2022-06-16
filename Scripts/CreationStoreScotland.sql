@@ -38,7 +38,7 @@ CREATE TABLE UserType (
 CREATE TABLE User_ (
 	[id] INT IDENTITY(1, 1),
 	[username] VARCHAR(16), --
-	[pass] VARCHAR(64), --
+	[pass] VARBINARY(64), --
 	[key_] VARCHAR(64), --
 	[administrator] BINARY(1),
 	[idClient] INT,
@@ -138,10 +138,9 @@ INSERT INTO Client(name_, idSuscription, telephone, uid, email, quantityBuy, loc
 VALUES('luisa', 1, '22332233', '32132132', 'luisa@gmail.com', 0, geometry::STGeomFromText('POINT(8 4)', 0))
 
 
---User
-INSERT INTO User_(idClient, username, idUserType, administrator, pass, key_)
-VALUES(1, 'paco123', 1, 1, 'Paco123*', 'encription')
-INSERT INTO User_(idClient, username, idUserType, administrator, pass, key_)
-VALUES(2, 'juana123', 3, 0, 'Juana123*', 'encription')
-INSERT INTO User_(idClient, username, idUserType, administrator, pass, key_)
-VALUES(3, 'luisa123', 4, 0, 'Luisa123*', 'encription')
+--Users
+/*
+EXEC CreateUser_ 'paco123', 'Paco123*', 'encription', 1, 1, 1, 0
+EXEC CreateUser_ 'juana123', 'Juana123*', 'encription', 0, 2, 3, 0
+EXEC CreateUser_ 'luisa123', 'Luisa123*', 'encription', 0, 3, 4, 0
+*/

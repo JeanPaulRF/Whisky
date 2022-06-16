@@ -1,6 +1,12 @@
 USE ScotlandStore
 GO
 
+--USE USAStore
+GO
+
+--USE IrelandStore
+GO
+
 -- USER
 --create a user
 
