@@ -77,6 +77,8 @@ BEGIN
 	SET NOCOUNT ON
 	BEGIN TRY
 		BEGIN TRANSACTION T1
+
+			DECLARE @temp TABLE(result bit)
 			
 			--check the user exists
 			IF EXISTS (SELECT id FROM User_ WHERE username=@username)
@@ -84,17 +86,16 @@ BEGIN
 				--check the password exists
 				IF @pass = (SELECT CONVERT(varchar(64), DECRYPTBYPASSPHRASE(key_, pass)) FROM User_ WHERE username=@username)
 				BEGIN
-				SELECT id from errorInformation where id = 0
+				INSERT INTO @temp(result) VALUES(1);
 				END
 
 				ELSE
 				BEGIN
-				SELECT id from errorInformation where id = 1
+				INSERT INTO @temp(result) VALUES(0);
 				END
 			END
-			ELSE
-			BEGINid from errorInformation where id = 3
-			END
+
+			SELECT result FROM @temp
 			
 		COMMIT TRANSACTION T1
 	 END TRY
