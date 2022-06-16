@@ -342,3 +342,509 @@ BEGIN
 END;
 GO
 
+
+
+--PROXIMITY
+--shows all the invetories by distance
+CREATE PROCEDURE GetEntireInventory(
+	@uidClient VARCHAR(16),
+	@ascending BIT,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			--temp table to get all the inventories
+			DECLARE @temp TABLE(
+			id INT,
+			quantity INT,
+			idProduct INT,
+			nameStore VARCHAR(16),
+			distance FLOAT)
+
+			--get the scotland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
+			WHERE i.idStore=s.id
+
+			--get the usa inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--get the ireland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--temp table to insert all the products
+			DECLARE @product TABLE(
+			id INT,
+			name_ VARCHAR(16),
+			aged VARCHAR(16),
+			idSupplier INT,
+			presentation VARCHAR(64),
+			currency VARCHAR(16),
+			cost_ INT,
+			idTypeProduct INT,
+			special BIT,
+			active_ BIT)
+
+			--insert all the productos in masterDB
+			INSERT INTO @product(id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_)
+			SELECT id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_
+			FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT * FROM Product')
+
+			--get the client suscription and check for special products
+			DECLARE @special BIT
+			IF (SELECT idSuscription FROM Client WHERE uid=@uidClient) >= 2
+				BEGIN
+				SET @special = 1
+				END
+			ELSE 
+				BEGIN 
+				SET @special = 0
+				END
+
+			--returns all the products depends on the inventory with the distance
+			IF @ascending=1 --if shows ascending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.id = i.idProduct
+				AND p.special <= @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance ASC
+				END
+
+			ELSE --if shows descending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.id = i.idProduct
+				AND p.special <= @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance DESC
+				END
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+
+--shows the products by name and the distance
+CREATE PROCEDURE GetProductByName(
+	@uidClient int,
+	@nameProduct VARCHAR(32),
+	@ascending BIT,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			--temp table to get all the inventories
+			DECLARE @temp TABLE(
+			id INT,
+			quantity INT,
+			idProduct INT,
+			nameStore VARCHAR(16),
+			distance FLOAT)
+
+			--get the scotland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
+			WHERE i.idStore=s.id
+
+			--get the usa inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--get the ireland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--temp table to insert all the products
+			DECLARE @product TABLE(
+			id INT,
+			name_ VARCHAR(16),
+			aged VARCHAR(16),
+			idSupplier INT,
+			presentation VARCHAR(64),
+			currency VARCHAR(16),
+			cost_ INT,
+			idTypeProduct INT,
+			special BIT,
+			active_ BIT)
+
+			--insert all the productos in masterDB
+			INSERT INTO @product(id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_)
+			SELECT id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_
+			FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT * FROM Product')
+
+			--get the client suscription and check for special products
+			DECLARE @special BIT
+			IF (SELECT idSuscription FROM Client WHERE uid=@uidClient) >= 2
+				BEGIN
+				SET @special = 1
+				END
+			ELSE 
+				BEGIN 
+				SET @special = 0
+				END
+
+			--returns all the products depends on the inventory with the distance
+			IF @ascending=1 --if shows ascending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.id = i.idProduct
+				AND p.special = @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance ASC
+				END
+
+			ELSE --if shows descending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.name_ = @nameProduct
+				AND p.id = i.idProduct
+				AND p.special = @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance DESC
+				END
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+
+--show products by name and distance
+CREATE PROCEDURE GetProductByType(
+	@uidClient int,
+	@typeProduct VARCHAR(32),
+	@ascending BIT,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			--temp table to get all the inventories
+			DECLARE @temp TABLE(
+			id INT,
+			quantity INT,
+			idProduct INT,
+			nameStore VARCHAR(16),
+			distance FLOAT)
+
+			--get the scotland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
+			WHERE i.idStore=s.id
+
+			--get the usa inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--get the ireland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--temp table to insert all the products
+			DECLARE @product TABLE(
+			id INT,
+			name_ VARCHAR(16),
+			aged VARCHAR(16),
+			idSupplier INT,
+			presentation VARCHAR(64),
+			currency VARCHAR(16),
+			cost_ INT,
+			idTypeProduct INT,
+			special BIT,
+			active_ BIT)
+
+			--insert all the productos in masterDB
+			INSERT INTO @product(id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_)
+			SELECT id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_
+			FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT * FROM Product')
+
+			--get the client suscription and check for special products
+			DECLARE @special BIT
+			IF (SELECT idSuscription FROM Client WHERE uid=@uidClient) >= 2
+				BEGIN
+				SET @special = 1
+				END
+			ELSE 
+				BEGIN 
+				SET @special = 0
+				END
+
+			--returns all the products depends on the inventory with the distance
+			IF @ascending=1 --if shows ascending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.idTypeProduct = @typeProduct
+				AND p.id = i.idProduct
+				AND p.special <= @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance ASC
+				END
+
+			ELSE --if shows descending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.idTypeProduct = @typeProduct
+				AND p.id = i.idProduct
+				AND p.special <= @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance DESC
+				END
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+
+
+--shows the products by cost and distance
+CREATE PROCEDURE GetProductByCost(
+	@uidClient int,
+	@cost INT,
+	@ascending BIT,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			--temp table to get all the inventories
+			DECLARE @temp TABLE(
+			id INT,
+			quantity INT,
+			idProduct INT,
+			nameStore VARCHAR(16),
+			distance FLOAT)
+
+			--get the scotland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [ScotlandStore].dbo.Inventory i, [ScotlandStore].dbo.Store s, [ScotlandStore].dbo.Client c
+			WHERE i.idStore=s.id
+
+			--get the usa inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [USAStore].dbo.Inventory i, [USAStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--get the ireland inventory
+			INSERT INTO @temp(id, quantity, idProduct, nameStore, distance)
+			SELECT i.id, i.quantity, i.idProduct, s.name_, c.location1.STDistance(s.location1)
+			FROM [IrelandStore].dbo.Inventory i, [IrelandStore].dbo.Store s, Client c
+			WHERE i.idStore=s.id
+
+			--temp table to insert all the products
+			DECLARE @product TABLE(
+			id INT,
+			name_ VARCHAR(16),
+			aged VARCHAR(16),
+			idSupplier INT,
+			presentation VARCHAR(64),
+			currency VARCHAR(16),
+			cost_ INT,
+			idTypeProduct INT,
+			special BIT,
+			active_ BIT)
+
+			--insert all the productos in masterDB
+			INSERT INTO @product(id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_)
+			SELECT id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_
+			FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT * FROM Product')
+
+			--get the client suscription and check for special products
+			DECLARE @special BIT
+			IF (SELECT idSuscription FROM Client WHERE uid=@uidClient) >= 2
+				BEGIN
+				SET @special = 1
+				END
+			ELSE 
+				BEGIN 
+				SET @special = 0
+				END
+
+			--returns all the products depends on the inventory with the distance
+			IF @ascending=1 --if shows ascending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.cost_ = @cost
+				AND p.id = i.idProduct
+				AND p.special <= @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance ASC
+				END
+
+			ELSE --if shows descending
+				BEGIN
+				SELECT 
+					i.nameStore,
+					i.distance,
+					i.idProduct, 
+					i.quantity,
+					p.name_,
+					p.aged,
+					p.presentation,
+					p.currency,
+					p.cost_,
+					p.idTypeProduct,
+					p.idSupplier
+				FROM @temp i, @product p
+				WHERE i.quantity>0 --if there are enough
+				AND p.cost_ = @cost
+				AND p.id = i.idProduct
+				AND p.special <= @special --if is special or not
+				AND p.active_ = 1 --if is active
+				ORDER BY i.distance DESC
+				END
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
