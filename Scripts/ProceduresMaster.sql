@@ -14,12 +14,13 @@ CREATE OR REPLACE PROCEDURE CreateProduct(
 	_currency VARCHAR(16),
 	_cost_ INT,
 	_idTypeProduct INT,
-	_special BOOLEAN)  
+	_special BOOLEAN,
+	_active BOOLEAN)  
 AS 
 $$
 	BEGIN
-		INSERT INTO Producto(name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special)
-		VALUES(_name_, _aged, _idSupplier, _presentation, _currency, _cost_, _idTypeProduct, _special)
+		INSERT INTO product(name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special,active_)
+		VALUES(_name_, _aged, _idSupplier, _presentation, _currency, _cost_, _idTypeProduct, _special,_active);
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -34,7 +35,7 @@ AS
 $$
 	BEGIN
 		SELECT name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special
-		From Producto
+		From product
 		WHERE name_ = _name_
 		AND active_ = 1;
 	EXCEPTION
@@ -60,7 +61,7 @@ CREATE OR REPLACE PROCEDURE UpdateProduct(
 AS 
 $$
 	BEGIN
-		UPDATE Producto
+		UPDATE product
 		SET name_ = _name_, 
 			aged = _aged, 
 			idSupplier = _idSupplier, 
@@ -69,7 +70,7 @@ $$
 			cost_ = _cost_, 
 			idTypeProduct = _idTypeProduct, 
 			special = _special
-		WHERE name_ = _nameOld
+		WHERE name_ = _nameOld;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -83,9 +84,9 @@ CREATE OR REPLACE PROCEDURE DeleteProduct(_name_ VARCHAR(16))
 AS 
 $$
 	BEGIN
-		UPDATE Producto
-		SET activate_ = 0, --set it inactive
-		WHERE name_ = _name_
+		UPDATE product
+		SET activate_ = 0 --set it inactive
+		WHERE name_ = _name_;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -107,7 +108,7 @@ CREATE OR REPLACE PROCEDURE CreateProductType(_name_ VARCHAR(16))
 AS 
 $$
 	BEGIN
-		INSERT INTO ProductType(name_) VALUES(_name_)
+		INSERT INTO ProductType(name_) VALUES(_name_);
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -123,7 +124,7 @@ AS
 $$
 	BEGIN
 		SELECT id, name_
-		From Producto
+		From product
 		WHERE name_ = _name_
 		AND active_ = 1;
 	EXCEPTION
@@ -149,7 +150,7 @@ CREATE OR REPLACE PROCEDURE UpdateProductType(
 AS 
 $$
 	BEGIN
-		UPDATE Producto
+		UPDATE product
 		SET name_ = _name_, 
 			aged = _aged, 
 			idSupplier = _idSupplier, 
@@ -158,7 +159,7 @@ $$
 			cost_ = _cost_, 
 			idTypeProduct = _idTypeProduct, 
 			special = _special
-		WHERE name_ = _nameOld
+		WHERE name_ = _nameOld;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -172,9 +173,9 @@ CREATE OR REPLACE PROCEDURE DeleteProductType(_name_ VARCHAR(16))
 AS 
 $$
 	BEGIN
-		UPDATE Producto
-		SET activate_ = 0, --set it inactive
-		WHERE name_ = _name_
+		UPDATE product
+		SET activate_ = 0 --set it inactive
+		WHERE name_ = _name_;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -308,7 +309,7 @@ LANGUAGE plpgsql;
 
 
 --Shows the best selling products
-drop function GetProductsByBestSeller
+--drop function GetProductsByBestSeller
 CREATE OR REPLACE FUNCTION GetProductsByBestSeller(_special BOOLEAN)
 RETURNS TABLE(
 	numSales BIGINT,
@@ -360,7 +361,7 @@ AS
 $$
 	BEGIN
 		INSERT INTO Review(idProduct, userName, commentary, date_, stars, storeNameUser)
-		SELECT _idProduct, _userName, _review, NOW()::DATE, _stars, _storenameUser
+		SELECT _idProduct, _userName, _review, NOW()::DATE, _stars, _storenameUser;
 		
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -411,7 +412,7 @@ $$
 	BEGIN
 		INSERT INTO EvaluationAnswer(idEvaluation, idWorker, commentary, date_, storeNameUser)
 		SELECT _idEvaluation, w.id, _commentary, NOW()::DATE, _storeUserName
-		FROM Worker w,
+		FROM Worker w
 		WHERE w._workerName = name_
 		AND w.idWorkerType = 1;
 		
