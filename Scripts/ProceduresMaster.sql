@@ -1,7 +1,8 @@
 
-
-
 --Postgres
+
+
+
 --CRUD Product
 
 --Procedure that createa a product
@@ -35,6 +36,7 @@ $$
 		SELECT name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special
 		From Producto
 		WHERE name_ = _name_
+		AND active_ = 1;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -83,7 +85,7 @@ $$
 	BEGIN
 		UPDATE Producto
 		SET activate_ = 0, --set it inactive
-		WHERE name_ = _nameOld
+		WHERE name_ = _name_
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -96,11 +98,116 @@ LANGUAGE plpgsql;
 
 
 
---shows the products by type
-CREATE OR REPLACE PROCEDURE GetProductsByType(_name_, VARCHAR(16), _special BOOLEAN)  
+
+
+--CRUD ProductType
+
+--Procedure that createa a productType
+CREATE OR REPLACE PROCEDURE CreateProductType(_name_ VARCHAR(16))  
 AS 
 $$
 	BEGIN
+		INSERT INTO ProductType(name_) VALUES(_name_)
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+--read a productType
+CREATE OR REPLACE PROCEDURE ReadProductType(_name_ VARCHAR(16))  
+AS 
+$$
+	BEGIN
+		SELECT id, name_
+		From Producto
+		WHERE name_ = _name_
+		AND active_ = 1;
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+--update a productType
+CREATE OR REPLACE PROCEDURE UpdateProductType(
+	_nameOld VARCHAR(16),
+	_name_ VARCHAR(16),
+	_aged VARCHAR(16),
+	_idSupplier INT,
+	_presentation VARCHAR(64),
+	_currency VARCHAR(16),
+	_cost_ INT,
+	_idTypeProduct INT,
+	_special BOOLEAN)  
+AS 
+$$
+	BEGIN
+		UPDATE Producto
+		SET name_ = _name_, 
+			aged = _aged, 
+			idSupplier = _idSupplier, 
+			presentation = _presentation, 
+			currency = _currency, 
+			cost_ = _cost_, 
+			idTypeProduct = _idTypeProduct, 
+			special = _special
+		WHERE name_ = _nameOld
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+--delete a productType
+CREATE OR REPLACE PROCEDURE DeleteProductType(_name_ VARCHAR(16))  
+AS 
+$$
+	BEGIN
+		UPDATE Producto
+		SET activate_ = 0, --set it inactive
+		WHERE name_ = _name_
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
+--QUERIES
+
+
+
+--shows the products by name
+CREATE OR REPLACE FUNCTION GetProductsByName(_name_ VARCHAR(16), _special BOOLEAN)  
+RETURNS TABLE(
+	id INT,
+	name_ VARCHAR(16),
+	aged VARCHAR(16),
+	supplierName VARCHAR(16),
+	presentation VARCHAR(64),
+	currency VARCHAR(16),
+	cost_ INT,
+	nameTypeProduct VARCHAR(64))
+AS 
+$$
+	BEGIN
+		RETURN QUERY
 		SELECT 
 			p.id,
 			p.name_,
@@ -109,12 +216,50 @@ $$
 			p.presentation,
 			p.currency,
 			p.cost_,
-			_name_,
+			t.name_
+		FROM Product p, ProductType t, Supplier s
+		WHERE p.name_ = _name_
+		AND p.idTypeProduct = t.id
+		AND s.id = p.idSupplier
+		AND (p.special = _special OR p.special = false); --check the suscription whit the special products
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+--shows the products by type
+CREATE OR REPLACE FUNCTION GetProductsByType(_name_ VARCHAR(16), _special BOOLEAN)  
+RETURNS TABLE(
+	id INT,
+	name_ VARCHAR(16),
+	aged VARCHAR(16),
+	supplierName VARCHAR(16),
+	presentation VARCHAR(64),
+	currency VARCHAR(16),
+	cost_ INT,
+	nameTypeProduct VARCHAR(64))
+AS 
+$$
+	BEGIN
+		RETURN QUERY
+		SELECT 
+			p.id,
+			p.name_,
+			p.aged,
+			s.name_,
+			p.presentation,
+			p.currency,
+			p.cost_,
+			t.name_
 		FROM Product p, ProductType t, Supplier s
 		WHERE t.name_ = _name_
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = _special OR p.special = 0) --check the suscription whit the special products
+		AND (p.special = _special OR p.special = false); --check the suscription whit the special products
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -125,10 +270,20 @@ LANGUAGE plpgsql;
 
 
 -- shows the products by cost
-CREATE OR REPLACE PROCEDURE GetProductsByCost(_cost_, INT, _special BOOLEAN)  
+CREATE OR REPLACE FUNCTION GetProductsByCost(_cost_ INT, _special BOOLEAN) 
+RETURNS TABLE(
+	id INT,
+	name_ VARCHAR(16),
+	aged VARCHAR(16),
+	supplierName VARCHAR(16),
+	presentation VARCHAR(64),
+	currency VARCHAR(16),
+	cost_ INT,
+	nameTypeProduct VARCHAR(64))
 AS 
 $$
 	BEGIN
+		RETURN QUERY
 		SELECT 
 			p.id,
 			p.name_,
@@ -137,12 +292,12 @@ $$
 			p.presentation,
 			p.currency,
 			p.cost_,
-			t.name_,
+			t.name_
 		FROM Product p, ProductType t, Supplier s
-		WHERE p.cost_ = cost_
+		WHERE p.cost_ = _cost_
 		AND p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = _special OR p.special = 0) --check the suscription whit the special products
+		AND (p.special = _special OR p.special = false); --check the suscription whit the special products
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
@@ -153,12 +308,24 @@ LANGUAGE plpgsql;
 
 
 --Shows the best selling products
-CREATE OR REPLACE PROCEDURE GetProductsByBestSeller(_special BOOLEAN)
+drop function GetProductsByBestSeller
+CREATE OR REPLACE FUNCTION GetProductsByBestSeller(_special BOOLEAN)
+RETURNS TABLE(
+	numSales BIGINT,
+	id INT,
+	name_ VARCHAR(16),
+	aged VARCHAR(16),
+	supplierName VARCHAR(16),
+	presentation VARCHAR(64),
+	currency VARCHAR(16),
+	cost_ INT,
+	nameTypeProduct VARCHAR(64))
 AS 
 $$
 	BEGIN
+		RETURN QUERY
 		SELECT 
-			SUM(v.quantity)*COUNT(id FROM Sale WHERE id = p.id) as Sales --number of sales of the product
+			SUM(v.quantity)*(SELECT COUNT(*) FROM Sale WHERE Sale.id = p.id), --number of sales of the product
 			p.id,
 			p.name_,
 			p.aged,
@@ -166,13 +333,14 @@ $$
 			p.presentation,
 			p.currency,
 			p.cost_,
-			t.name_,
+			t.name_
 		FROM Product p, ProductType t, Supplier s, Sale v
-		AND p.idTypeProduct = t.id
+		WHERE p.idTypeProduct = t.id
 		AND s.id = p.idSupplier
-		AND (p.special = _special OR p.special = 0) --check the suscription whit the special products
+		AND (p.special = _special OR p.special = false) --check the suscription whit the special products
 		AND v.idProduct = p.id
-		ORDER BY Sales DESC -- order it by the number of sales
+		GROUP BY p.id, t.name_, s.name_, v.* -- order it by the number of sales
+		ORDER BY v DESC;
 		
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -181,6 +349,8 @@ $$
 	END;
 $$ 
 LANGUAGE plpgsql;
+
+SELECT * FROM GetProductsByBestSeller(true);
 
 
 --Create the review of a product
