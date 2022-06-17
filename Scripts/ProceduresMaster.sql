@@ -14,12 +14,13 @@ CREATE OR REPLACE PROCEDURE CreateProduct(
 	_currency VARCHAR(16),
 	_cost_ INT,
 	_idTypeProduct INT,
-	_special BOOLEAN)  
+	_special BOOLEAN,
+	_active BOOLEAN)  
 AS 
 $$
 	BEGIN
-		INSERT INTO Product(name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_)
-		VALUES(_name_, _aged, _idSupplier, _presentation, _currency, _cost_, _idTypeProduct, _special, true);
+		INSERT INTO product(name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special,active_)
+		VALUES(_name_, _aged, _idSupplier, _presentation, _currency, _cost_, _idTypeProduct, _special,_active);
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
 			--Mostrar error
