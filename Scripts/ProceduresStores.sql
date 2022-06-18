@@ -968,3 +968,58 @@ BEGIN
 	 SET NOCOUNT OFF
 END;
 GO
+
+
+
+--DISCOUNT
+
+--return the sale discount
+CREATE PROCEDURE GetSaleDiscount(
+	@idCliente int,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			SELECT s.discountBuy FROM Client c, Suscription s WHERE c.id=@idCliente AND c.idSuscription = s.id
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+
+END;
+GO
+
+
+--return the delivery discount
+CREATE PROCEDURE GetDeliveryDiscount(
+	@idCliente int,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			SELECT s.discountDelivery FROM Client c, Suscription s WHERE c.id=@idCliente AND c.idSuscription = s.id
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+
+END;
+GO

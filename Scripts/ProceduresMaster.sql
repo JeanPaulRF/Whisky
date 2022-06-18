@@ -577,6 +577,57 @@ $$
 LANGUAGE plpgsql;
 
 
+drop function getbilling
+--BILLING
+CREATE OR REPLACE FUNCTION GetBilling(
+	_idClient int,
+	_storename VARCHAR(32),
+	_discount int) 
+RETURNS TABLE(
+	total numeric,
+	cost_ int,
+	name_ VARCHAR(64),
+	currency VARCHAR(64),
+	aged VARCHAR(64),
+	presentation VARCHAR(64),
+	quantity INT,
+	date_ DATE)
+AS 
+$$
+	BEGIN
+		
+		RETURN QUERY
+		--shows bill
+		SELECT 
+			SUM(p.cost_) * s.quantity * (1- (_discount::decimal/100) ), --sum the total of the product and rest the discount
+			p.cost_,
+			p.name_,
+			p.currency,
+			p.aged,
+			p.presentation,
+			s.quantity,
+			s.date_
+		FROM Sale s, Product p
+		WHERE s.idClient = _idClient
+		AND s.idProduct = p.id
+		AND s.date_ = (SELECT Sale.date_ FROM Sale 
+					   WHERE Sale.idClient=_idClient 
+					   AND Sale.storename = _storename
+					   ORDER BY id DESC LIMIT 1)
+		GROUP BY p.cost_, s.quantity, p.name_, p.currency, p.aged, p.presentation, s.date_;
+		
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+SELECT * FROM GetBilling(1, 'Scotland', 5)
+
+
 
 			
 
