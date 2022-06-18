@@ -116,7 +116,7 @@ LANGUAGE plpgsql;
 --CRUD ProductType
 
 --Procedure that createa a productType
-CREATE OR REPLACE PROCEDURE CreateProductType(_name_ VARCHAR(16))  
+CREATE OR REPLACE PROCEDURE CreateProductType(_name_ VARCHAR(64))  
 AS 
 $$
 	BEGIN
@@ -152,8 +152,8 @@ LANGUAGE plpgsql;
 
 --update a productType
 CREATE OR REPLACE PROCEDURE UpdateProductType(
-	_nameOld VARCHAR(16),
-	_name_ VARCHAR(16))  
+	_nameOld VARCHAR(64),
+	_name_ VARCHAR(64))  
 AS 
 $$
 	BEGIN
@@ -188,10 +188,110 @@ LANGUAGE plpgsql;
 
 
 
+--CRUD Worker
+
+--Procedure that createa a worker
+CREATE OR REPLACE PROCEDURE CreateWorker(
+	_salaryLocal INT,
+	_salaryDolar INT,
+	_name_ VARCHAR(64),
+	_uid VARCHAR(16),
+	_email VARCHAR(64),
+	_telephone VARCHAR(16),
+	_idWorkerType INT)  
+AS 
+$$
+	BEGIN
+		INSERT INTO Worker(salaryLocal, salaryDolar, name_, uid, email, telephone, idWorkerType, active_)
+		VALUES(_salaryLocal, _salaryDolar, _name_, _uid, _email, _telephone, _idWorkerType, true);
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+--read a worker
+CREATE OR REPLACE FUNCTION ReadWorker(_name_ VARCHAR(64))
+RETURNS TABLE(
+	id INT,
+	salaryLocal INT,
+	salaryDolar INT,
+	name_ VARCHAR(64),
+	uid VARCHAR(16),
+	email VARCHAR(64),
+	telephone VARCHAR(16),
+	idWorkerType INT
+)  
+AS 
+$$
+	BEGIN
+		RETURN QUERY
+		SELECT id, salaryLocal, salaryDolar, name_, uid, email, telephone, idWorkerType
+		From Worker
+		WHERE name_ = _name_
+		AND active_ = true;
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+--update a worker
+CREATE OR REPLACE PROCEDURE UpdateWorker(
+	_nameOld VARCHAR(64),
+	_salaryLocal INT,
+	_salaryDolar INT,
+	_name_ VARCHAR(64),
+	_uid VARCHAR(16),
+	_email VARCHAR(64),
+	_telephone VARCHAR(16),
+	_idWorkerType INT)  
+AS 
+$$
+	BEGIN
+		UPDATE Worker
+		SET salaryLocal = _salaryLocal,
+			salaryDolar = _salaryDolar,
+			name_ = _name_,
+			uid = _uid,
+			email = _email,
+			telephone = _telephone,
+			idWorkerType = _idWorkerType
+		WHERE name_ = _nameOld;
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+--delete a worker
+CREATE OR REPLACE PROCEDURE DeleteWorker(_name_ VARCHAR(64))  
+AS 
+$$
+	BEGIN
+		UPDATE Worker
+		SET active_ = false --set it inactive
+		WHERE name_ = _name_;
+	EXCEPTION
+		WHEN no_data_found THEN --Si no encuentra datos
+			--Mostrar error
+			RAISE EXCEPTION 'Error al procesar :(';
+	END;
+$$ 
+LANGUAGE plpgsql;
+
+
+
 
 
 --QUERIES
-
 
 
 --shows the products by name
