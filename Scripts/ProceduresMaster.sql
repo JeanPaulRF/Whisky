@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE CreateProduct(
 	_cost_ INT,
 	_idTypeProduct INT,
 	_special BOOLEAN,
-	_active BOOLEAN)  
+	_active BOOLEAN)  	
 AS 
 $$
 	BEGIN
@@ -30,17 +30,17 @@ $$
 LANGUAGE plpgsql;
 
 --read a product
-CREATE OR REPLACE FUNCTION ReadProduct(_name_ VARCHAR(16))
+CREATE OR REPLACE FUNCTION ReadProduct(_pname_ VARCHAR(32))
 RETURNS TABLE(
-	id INT,
-	name_ VARCHAR(16),
-	aged VARCHAR(16),
-	idSupplier INT,
-	presentation VARCHAR(64),
-	currency VARCHAR(16),
-	cost_ INT,
-	idTypeProduct INT,
-	special BOOLEAN
+	_id_ INT,
+	_name_ VARCHAR(16),
+	_aged_ VARCHAR(16),
+	_idSupplier_ INT,
+	_presentation_ VARCHAR(64),
+	_currency_ VARCHAR(16),
+	_cost_ INT,
+	_idTypeProduct_ INT,
+	_special_ BOOLEAN
 )  
 AS 
 $$
@@ -48,7 +48,7 @@ $$
 		RETURN QUERY
 		SELECT id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special
 		From Product
-		WHERE name_ = _name_
+		WHERE name_ = _pname_
 		AND active_ = true;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -131,15 +131,15 @@ LANGUAGE plpgsql;
 
 
 --read a productType
-CREATE OR REPLACE FUNCTION ReadProductType(_name_ VARCHAR(64)) 
-RETURNS TABLE(name_ VARCHAR(64))
+CREATE OR REPLACE FUNCTION ReadProductType(_pname_ VARCHAR(64)) 
+RETURNS TABLE(_id_ int,_name_ VARCHAR(64))
 AS 
 $$
 	BEGIN
 		RETURN QUERY
 		SELECT id, name_
 		From ProductType
-		WHERE name_ = _name_
+		WHERE name_ = _pname_
 		AND active_ = true;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -174,7 +174,7 @@ AS
 $$
 	BEGIN
 		UPDATE ProductType
-		SET activate_ = false --set it inactive
+		SET active_ = false --set it inactive
 		WHERE name_ = _name_;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -213,16 +213,16 @@ $$
 LANGUAGE plpgsql;
 
 --read a worker
-CREATE OR REPLACE FUNCTION ReadWorker(_name_ VARCHAR(64))
+CREATE OR REPLACE FUNCTION ReadWorker(_pname_ VARCHAR(64))
 RETURNS TABLE(
-	id INT,
-	salaryLocal INT,
-	salaryDolar INT,
-	name_ VARCHAR(64),
-	uid VARCHAR(16),
-	email VARCHAR(64),
-	telephone VARCHAR(16),
-	idWorkerType INT
+	_id_ INT,
+	_salaryLocal_ INT,
+	_salaryDolar_ INT,
+	_name_ VARCHAR(64),
+	_uid_ VARCHAR(16),
+	_email_ VARCHAR(64),
+	_telephone_ VARCHAR(16),
+	_idWorkerType_ INT
 )  
 AS 
 $$
@@ -230,7 +230,7 @@ $$
 		RETURN QUERY
 		SELECT id, salaryLocal, salaryDolar, name_, uid, email, telephone, idWorkerType
 		From Worker
-		WHERE name_ = _name_
+		WHERE name_ = _pname_
 		AND active_ = true;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos
@@ -297,7 +297,7 @@ LANGUAGE plpgsql;
 --shows the products by name
 CREATE OR REPLACE FUNCTION GetProductsByName(_name_ VARCHAR(16), _special BOOLEAN)  
 RETURNS TABLE(
-	id INT,
+	id_ INT,
 	name_ VARCHAR(16),
 	aged VARCHAR(16),
 	supplierName VARCHAR(16),
@@ -335,7 +335,7 @@ LANGUAGE plpgsql;
 --shows the products by type
 CREATE OR REPLACE FUNCTION GetProductsByType(_name_ VARCHAR(16), _special BOOLEAN)  
 RETURNS TABLE(
-	id INT,
+	id_ INT,
 	name_ VARCHAR(16),
 	aged VARCHAR(16),
 	supplierName VARCHAR(16),
@@ -373,7 +373,7 @@ LANGUAGE plpgsql;
 -- shows the products by cost
 CREATE OR REPLACE FUNCTION GetProductsByCost(_cost_ INT, _special BOOLEAN) 
 RETURNS TABLE(
-	id INT,
+	id_ INT,
 	name_ VARCHAR(16),
 	aged VARCHAR(16),
 	supplierName VARCHAR(16),
@@ -412,7 +412,7 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GetProductsByBestSeller(_special BOOLEAN)
 RETURNS TABLE(
 	numSales BIGINT,
-	id INT,
+	id_ INT,
 	name_ VARCHAR(16),
 	aged VARCHAR(16),
 	supplierName VARCHAR(16),
