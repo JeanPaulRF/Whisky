@@ -6,12 +6,14 @@
 /*
 CREATE DATABASE "MasterDB"
     WITH 
-    OWNER = admin123
+    OWNER = postgres
     ENCODING = 'UTF8'
     LC_COLLATE = 'en_US.UTF-8'
     LC_CTYPE = 'en_US.UTF-8'
     TABLESPACE = pg_default
+	template = template0
     CONNECTION LIMIT = -1;
+	
 */
 
 -- TABLES
@@ -29,7 +31,7 @@ CREATE TABLE Worker (
 
 CREATE TABLE Product (
 	id serial PRIMARY KEY,
-	name_ VARCHAR(16),
+	name_ VARCHAR(32),
 	aged VARCHAR(16),
 	idSupplier INT,
 	presentation VARCHAR(64),
@@ -192,12 +194,12 @@ REFERENCES Worker (id);
 
 
 --Insert Product Types
-INSERT INTO ProductType(name_) VALUES('Single Malt');
-INSERT INTO ProductType(name_) VALUES('Blended Scotch');
-INSERT INTO ProductType(name_) VALUES('Irish');
-INSERT INTO ProductType(name_) VALUES('Blended Malt');
-INSERT INTO ProductType(name_) VALUES('Bourbon');
-INSERT INTO ProductType(name_) VALUES('Tennessee Whiskey');
+INSERT INTO ProductType(name_,active_) VALUES('Single Malt',true);
+INSERT INTO ProductType(name_,active_) VALUES('Blended Scotch',true);
+INSERT INTO ProductType(name_,active_) VALUES('Irish',true);
+INSERT INTO ProductType(name_,active_) VALUES('Blended Malt',true);
+INSERT INTO ProductType(name_,active_) VALUES('Bourbon',true);
+INSERT INTO ProductType(name_,active_) VALUES('Tennessee Whiskey',true);
 
 --Insert Suppliers
 INSERT INTO Supplier(name_) VALUES('Global whisky');

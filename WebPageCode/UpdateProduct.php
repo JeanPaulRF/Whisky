@@ -17,16 +17,15 @@
 			$queryGetSupplier = ("SELECT id FROM supplier WHERE name_ = '$_POST[idSupplier]';");
 			$consultSupplier = pg_query($conexion,$queryGetSupplier);
 			$idSupplier= pg_fetch_array($consultSupplier);
-
-			$queryInsert = ("CALL CreateProduct('$_POST[name]',
+			$queryInsert = ("CALL UpdateProduct('$_POST[oldname_]',
+				'$_POST[name_]',
 				'$_POST[aged]',
 				$idSupplier[id],
 				'$_POST[presentation]',
 				'$_POST[currency]',
-				'$_POST[cost]',
+				$_POST[cost],
 				$idProductType[id],
-				'$_POST[special]',
-				TRUE);");
+				'$_POST[special]');");
 		
 			$consultInsert=pg_query($conexion,$queryInsert);
 			pg_close();
@@ -40,7 +39,7 @@
 			{
 				echo
 				"<div class='page-header bg-primary text-white text-center'>
-					<span class='h4'>An error ocurred, the product was not inserted</span>
+					<span class='h4'>An error ocurred, the product was not updated</span>
 				</div>";
 			}
 			
@@ -64,11 +63,16 @@
 	</div>
 
 	<form action="" method="POST" style="width:40%;margin:0 auto;" enctype="multipart/form-data">			
-			<legend class="text-center header text-success">Add a new product</legend>
+			<legend class="text-center header text-success">Update product</legend>
 			
 			<div class="form-group">
-				<label for="name">Name</label>
-				<input type="text" class="form-control" name="name">
+				<label for="oldname_">Old Name</label>
+				<input readonly type="text" class="form-control" name="oldname_" value=<?php echo "$_REQUEST[name]"?>>
+			</div>
+
+			<div class="form-group">
+				<label for="name_">Name</label>
+				<input type="text" class="form-control" name="name_">
 			</div>
 
 			<div class="form-group">
@@ -116,7 +120,7 @@
 			</div>
 
 			<div class="form-group">
-				<label for="idProductType">Product Type</label>
+				<label for="idProductType">Worker Type</label>
 				<select class="form-control" name="idProductType" id="idProductType">
 					<?php
 						$host='localhost';
@@ -125,7 +129,7 @@
 						$pass='atomico';
 						$connexion = pg_connect("host=$host dbname=$bd user=$user password=$pass");
 			
-						$queryControl = "SELECT name_ FROM ProductType where active_ = true;";
+						$queryControl = "SELECT name_ FROM ProductType;";
 						$consult=pg_query($connexion,$queryControl);
 						while ($registro = pg_fetch_array($consult))
          			{

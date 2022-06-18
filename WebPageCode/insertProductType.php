@@ -2,15 +2,18 @@
 
 		if(isset($_POST['save']) && $_POST['save']=='Save')
 		{
+			//connexion to database
 			$host='localhost';
 			$bd='MasterDB';
 			$user='postgres';
 			$pass='atomico';
 			$connexion = pg_connect("host=$host dbname=$bd user=$user password=$pass");
 
-			$queryControl = "SELECT name_ FROM ProductType WHERE name_ = '$_POST[name]';";
-			$consulta=pg_query($connexion,$queryControl);
-			$name = pg_fetch_array($consulta);
+			//Query to verify if the name is duplicate
+			$queryControl = "SELECT name_ FROM ProductType WHERE name_ = '$_POST[name]' and active_ = true;";
+			$consult=pg_query($connexion,$queryControl);
+			$name = pg_fetch_array($consult);
+			
 			if($name['name_'] == $_POST['name'] )
 			{
 				header("Location: errorDuplicate.html");
@@ -18,11 +21,22 @@
 			}
 			else
 			{
-			$query = ("Insert into ProductType(name_) VALUES('$_POST[name]');");
-			$consulta=pg_query($connexion,$query);
-			pg_close();
-			header("Location: AdminMenu.html");
-			exit();
+				$query = ("CALL CreateProductType('$_POST[name]');");
+				$consult=pg_query($connexion,$query);
+				if($consult)
+				{
+					pg_close();
+					header("Location: AdminMenu.html");
+					exit();
+				}
+				else
+				{
+					echo
+					"<div class='page-header bg-primary text-white text-center'>
+						<span class='h4'>An error ocurred, the product type was not inserted</span>
+					</div>";
+				}
+				
 			}
 	}
 
