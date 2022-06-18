@@ -213,16 +213,16 @@ $$
 LANGUAGE plpgsql;
 
 --read a worker
-CREATE OR REPLACE FUNCTION ReadWorker(_name_ VARCHAR(64))
+CREATE OR REPLACE FUNCTION ReadWorker(_pname_ VARCHAR(64))
 RETURNS TABLE(
-	id INT,
-	salaryLocal INT,
-	salaryDolar INT,
-	name_ VARCHAR(64),
-	uid VARCHAR(16),
-	email VARCHAR(64),
-	telephone VARCHAR(16),
-	idWorkerType INT
+	_id_ INT,
+	_salaryLocal_ INT,
+	_salaryDolar_ INT,
+	_name_ VARCHAR(64),
+	_uid_ VARCHAR(16),
+	_email_ VARCHAR(64),
+	_telephone_ VARCHAR(16),
+	_idWorkerType_ INT
 )  
 AS 
 $$
@@ -230,7 +230,7 @@ $$
 		RETURN QUERY
 		SELECT id, salaryLocal, salaryDolar, name_, uid, email, telephone, idWorkerType
 		From Worker
-		WHERE name_ = _name_
+		WHERE name_ = _pname_
 		AND active_ = true;
 	EXCEPTION
 		WHEN no_data_found THEN --Si no encuentra datos

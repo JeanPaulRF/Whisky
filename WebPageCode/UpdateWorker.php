@@ -1,23 +1,43 @@
 <?php
 	if(isset($_POST['save']) && $_POST['save']=='Save')
 	{		
+			//connexion to the database
 			$host='localhost';
 			$bd='MasterDB';
 			$user='postgres';
 			$pass='atomico';
 			$conexion = pg_connect("host=$host dbname=$bd user=$user password=$pass");
 
-			$queryGetWorkerType = ("SELECT id FROM WorkerType WHERE name_ = '$_POST[idWorkerType]';");
-			$consult = pg_query($conexion,$queryGetWorkerType);
-			$idWorkerType = pg_fetch_array($consult);
+			//get the id of the product type to execute the CRUD function with the correct params
+			$queryGetProductType = ("SELECT id FROM workerType WHERE name_ = '$_POST[idWorkerType]';");
+			$consultProduct = pg_query($conexion,$queryGetProductType);
+			$idWorkerType = pg_fetch_array($consultProduct);
 
-			$queryInsert = ("Call CreateWorker('$_POST[LocalSalary]','$_POST[USD]','$_POST[name]','$_POST[uid]','$_POST[email]','$_POST[telephone]','$idWorkerType[id]');");
-			
+			$queryInsert = ("CALL UpdateWorker('$_POST[oldname_]',
+				'$_POST[LocalSalary]',
+				'$_POST[USD]',
+				'$_POST[name]',
+				'$_POST[uid]',
+				'$_POST[email]',
+				'$_POST[telephone]',
+				$idWorkerType[id]);");
+		
 			$consultInsert=pg_query($conexion,$queryInsert);
 			pg_close();
 
-			header("Location: AdminMenu.html");
-			exit();
+			if($consultInsert)
+			{
+				header("Location: AdminMenu.html");
+				exit();
+			}
+			else
+			{
+				echo
+				"<div class='page-header bg-primary text-white text-center'>
+					<span class='h4'>An error ocurred, the product was not updated</span>
+				</div>";
+			}
+			
 	}
 
 ?>
@@ -29,7 +49,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	
-	<title>Add worker</title>
+	<title>Add Product</title>
 </head>
 <body>
 
@@ -38,8 +58,14 @@
 	</div>
 
 	<form action="" method="POST" style="width:40%;margin:0 auto;" enctype="multipart/form-data">			
-			<legend class="text-center header text-success">Add a new worker</legend>
+			<legend class="text-center header text-success">Update product</legend>
 			
+			<?php echo 
+				"<div class='form-group'>
+					<label for='oldname_'>Old Name</label>
+					<input readonly type='text' class='form-control' name='oldname_' value='$_REQUEST[name]'		>
+				</div>"
+			?>
 			<div class="form-group">
 				<label for="name">Name</label>
 				<input type="text" class="form-control" name="name">
@@ -91,16 +117,13 @@
 					
 				</select>		
 			</div>
-		
+
+
 		<div class="form-group">
 		<a href="confirmacion.html">
 			<input type="submit" class="btn btn-success form-control" name="save" value="Save">
 		</a>
 		</div>
-
-
-
-
 
 		<div class="form-group">
 		<a href="adminMenu.html">
