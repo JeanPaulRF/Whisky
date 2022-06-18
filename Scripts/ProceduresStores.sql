@@ -7,6 +7,126 @@ GO
 --USE IrelandStore
 GO
 
+
+
+--CRUD Suscription
+
+--create suscription
+CREATE PROCEDURE CreateSuscription(
+	@id INT,
+	@name_ VARCHAR(32),
+	@discountBuy INT,
+	@discountDelivery INT,
+	@cost_ INT,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			INSERT INTO Suscription(id, name_, discountBuy, discountDelivery, cost_)
+			VALUES(@id, @name_, @discountBuy, @discountDelivery, @cost_)
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+--read suscription
+CREATE PROCEDURE ReadSuscription(
+	@name_ VARCHAR(32),
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			SELECT id, name_, discountBuy, discountDelivery, cost_
+			FROM Suscription
+			WHERE name_ = @name_
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+--update suscription
+CREATE PROCEDURE UpdateSuscription(
+	@nameOld VARCHAR(32),
+	@name_ VARCHAR(32),
+	@discountBuy INT,
+	@discountDelivery INT,
+	@cost_ INT,
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			UPDATE Suscription
+			SET name_ = @name_,
+				discountBuy = @discountBuy,
+				discountDelivery = @discountDelivery,
+				cost_ = @cost_
+			WHERE name_ = @nameOld
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+--delete suscription
+CREATE PROCEDURE DeleteSuscription(
+	@name_ VARCHAR(32),
+	@outCodeResult int OUTPUT)
+AS
+BEGIN
+	SET NOCOUNT ON
+	BEGIN TRY
+		BEGIN TRANSACTION T1
+
+			UPDATE Suscription
+			SET active_ = 0
+			WHERE name_ = @name_
+
+		COMMIT TRANSACTION T1
+	 END TRY
+	 BEGIN CATCH
+		IF @@tRANCOUNT>0
+			ROLLBACK TRAN T1;
+		--INSERT EN TABLA DE ERRORES;
+		SET @outCodeResult=50005;
+	 END CATCH
+	 SET NOCOUNT OFF
+END;
+GO
+
+
+
 -- USER
 --create a user
 

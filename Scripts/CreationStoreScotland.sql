@@ -71,6 +71,8 @@ CREATE TABLE Suscription (
 	[name_] VARCHAR(32),
 	[discountBuy] INT,
 	[discountDelivery] INT,
+	[cost_] INT,
+	[active_] BIT DEFAULT(1),
 
 	CONSTRAINT pk_Suscription PRIMARY KEY (id)
 );

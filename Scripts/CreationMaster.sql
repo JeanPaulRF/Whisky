@@ -23,7 +23,8 @@ CREATE TABLE Worker (
 	uid VARCHAR(16),
 	email VARCHAR(64),
 	telephone VARCHAR(16),
-	idWorkerType INT
+	idWorkerType INT,
+	active_ BOOLEAN
 );
 
 CREATE TABLE Product (
@@ -52,7 +53,8 @@ CREATE TABLE Image_ (
 
 CREATE TABLE ProductType (
 	id serial PRIMARY KEY,
-	name_ VARCHAR(64)
+	name_ VARCHAR(64),
+	active_ BOOLEAN
 );
 
 CREATE TABLE WorkerType (
