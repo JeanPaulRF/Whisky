@@ -124,14 +124,14 @@ INSERT INTO UserType(id, name_) VALUES(4, 'user')
 
 
 --Suscriptions
-INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
-VALUES(1, 'None', 0, 0)
-INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
-VALUES(2, 'Tier Short Glass', 5, 0)
-INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
-VALUES(3, 'Tier Gleincairn', 10, 20)
-INSERT INTO Suscription(id, name_, discountBuy, discountDelivery)
-VALUES(4, 'Tier Master Distiller', 30, 100)
+INSERT INTO Suscription(id, name_, discountBuy, discountDelivery, cost_)
+VALUES(1, 'None', 0, 0, 0)
+INSERT INTO Suscription(id, name_, discountBuy, discountDelivery, cost_)
+VALUES(2, 'Tier Short Glass', 5, 0, 1000)
+INSERT INTO Suscription(id, name_, discountBuy, discountDelivery, cost_)
+VALUES(3, 'Tier Gleincairn', 10, 20, 2000)
+INSERT INTO Suscription(id, name_, discountBuy, discountDelivery, cost_)
+VALUES(4, 'Tier Master Distiller', 30, 100, 3000)
 
 
 --Clients
