@@ -41,7 +41,7 @@ CREATE TABLE UserType (
 CREATE TABLE User_ (
 	[id] INT IDENTITY(1, 1),
 	[username] VARCHAR(16), --
-	[pass] VARBINARY(64), --
+	[pass] VARCHAR(64), --
 	[key_] VARCHAR(64), --
 	[administrator] BINARY(1),
 	[idClient] INT,
