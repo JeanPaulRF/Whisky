@@ -582,7 +582,8 @@ drop function getbilling
 CREATE OR REPLACE FUNCTION GetBilling(
 	_idClient int,
 	_storename VARCHAR(32),
-	_discount int) 
+	_discount int,
+	_date DATE) 
 RETURNS TABLE(
 	total numeric,
 	cost_ int,
@@ -609,11 +610,9 @@ $$
 			s.date_
 		FROM Sale s, Product p
 		WHERE s.idClient = _idClient
+		AND s.storename = _storename
 		AND s.idProduct = p.id
-		AND s.date_ = (SELECT Sale.date_ FROM Sale 
-					   WHERE Sale.idClient=_idClient 
-					   AND Sale.storename = _storename
-					   ORDER BY id DESC LIMIT 1)
+		AND s.date_ = _date
 		GROUP BY p.cost_, s.quantity, p.name_, p.currency, p.aged, p.presentation, s.date_;
 		
 	EXCEPTION
