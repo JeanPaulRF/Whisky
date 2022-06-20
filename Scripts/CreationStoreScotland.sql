@@ -43,7 +43,7 @@ CREATE TABLE UserType (
 CREATE TABLE User_ (
 	[id] INT IDENTITY(1, 1),
 	[username] VARCHAR(16), --
-	[pass] VARCHAR(64), --
+	[pass] VARBINARY(64), --
 	[key_] VARCHAR(64), --
 	[administrator] BINARY(1),
 	[idClient] INT,
@@ -151,7 +151,14 @@ VALUES('luisa', 1, '22332233', '32132132', 'luisa@gmail.com', 0, geometry::STGeo
 
 --Users
 /*
-EXEC CreateUser_ 'paco123', 'Paco123*', 'encription', 1, 1, 1, 0
-EXEC CreateUser_ 'juana123', 'Juana123*', 'encription', 0, 2, 3, 0
-EXEC CreateUser_ 'luisa123', 'Luisa123*', 'encription', 0, 3, 4, 0
+USE ScotlandStore
+GO
+EXEC CreateUser_ 'paco123', 'Paco123*', 'encryption', 1, 1, 1, 0
+EXEC CreateUser_ 'juana123', 'Juana123*', 'encryption', 0, 2, 3, 0
+EXEC CreateUser_ 'luisa123', 'Luisa123*', 'encryption', 0, 3, 4, 0
+
+SELECT * from User_
+
+
+EXEC ReadUser 'paco123', 0
 */

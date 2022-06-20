@@ -1,10 +1,10 @@
-USE ScotlandStore
+--USE ScotlandStore
 GO
 
 --USE USAStore
 GO
 
---USE IrelandStore
+USE IrelandStore
 GO
 
 
@@ -133,7 +133,6 @@ GO
 CREATE PROCEDURE CreateUser_(
 	@username VARCHAR(16),
 	@pass VARCHAR(64),
-	@key VARCHAR(64),
 	@administrator BINARY,
 	@idClient INT,
 	@idUserType INT,
@@ -145,10 +144,10 @@ BEGIN
 		BEGIN TRANSACTION T1
 
 			DECLARE @pssb VARBINARY(64)
-			SET @pssb = (ENCRYPTBYPASSPHRASE(@key, @pass))
+			SET @pssb = (ENCRYPTBYPASSPHRASE('encryption', @pass))
 
 			INSERT INTO User_(username, pass, key_, administrator, idClient, idUserType)
-			VALUES(@username, @pssb, @key, @administrator, @idClient, @idUserType)
+			VALUES(@username, @pssb, 'encryption', @administrator, @idClient, @idUserType)
 
 		COMMIT TRANSACTION T1
 	 END TRY
