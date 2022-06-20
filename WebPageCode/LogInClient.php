@@ -1,8 +1,17 @@
 <?php
 if(isset($_POST['save']) && $_POST['save']=='Save')
 {
+  
+  if($_POST['store'] == 'USA')
+      $dbname = 'USAStore';
+    else
+      if($_POST['store'] == 'Ireland')
+        $dbname = 'IrelandStore';
+      else
+        $dbname = 'ScotlandStore';
+        
   $host = 'localhost';
-  $dbname = 'ScotlandStore';
+  //$dbname = 'ScotlandStore';
   $username = 'sa';
   $password= '12345678';
   $puerto = 62727;
@@ -163,11 +172,24 @@ if(isset($_POST['save']) && $_POST['save']=='Save')
                               <input name="password" type="password" id="password" placeholder="password" required="">
                             </fieldset>
                           </div>
+                          <div class="col-md-6 col-sm-12">
+                            <fieldset>
+                              <label for="store" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px ;" >
+                                Store:
+                              </label>
+                                <select name="store" id="store" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
+                                  <option value="USA">USA</option>
+                                  <option value="Scotland">Scotland</option>
+                                  <option value="Ireland">Ireland</option>
+                                </select>
+                            </fieldset>
+                          </div> 
                           <div class="col-lg-12">
                             <fieldset>
                               <button type="submit" name="save" value="Save" id="form-submit" class="main-button" onclick="passvalues(); ">Log in</button>
                             </fieldset>
                           </div>
+                          
                         </div>
                       </form>
 

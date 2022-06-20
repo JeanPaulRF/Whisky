@@ -7,8 +7,16 @@
   if(isset($_POST['save']) && $_POST['save']=='Save')
 	{ 
 
+    if($_POST['store'] == 'USA')
+      $dbname = 'USAStore';
+    else
+      if($_POST['store'] == 'Ireland')
+        $dbname = 'IrelandStore';
+      else
+        $dbname = 'ScotlandStore';
+      
     $host = 'localhost';
-    $dbname = 'ScotlandStore';
+    //$dbname = 'IrelandStore';
     $username = 'sa';
     $password= '12345678';
     $puerto = 62727;
@@ -19,7 +27,11 @@
 
     $queryInsert = "INSERT INTO Client(name_, uid, email, telephone, quantityBuy, idSuscription) VALUES (?,?,?,?,?,?)";
 
-    $params = array($_POST['name'], $_POST['uid'], $_POST['email'],$_POST['telephone'], 0, $_POST['tier']);
+    $idTierquery = "SELECT id from Suscription where name_ = '$_POST[tier]'";
+    $consultId = sqlsrv_query($conexion,$idTierquery);
+    $idTier = sqlsrv_fetch_array($consultId);
+
+    $params = array($_POST['name'], $_POST['uid'], $_POST['email'],$_POST['telephone'], 0, $idTier['id']);
     $consultInsert = sqlsrv_query($conexion,$queryInsert,$params);
 
     if ($consultInsert)
@@ -28,12 +40,18 @@
       $queryGetID = "SELECT TOP 1 * FROM client ORDER BY id DESC";
       $consultUserId=sqlsrv_query($conexion,$queryGetID);
       $id = sqlsrv_fetch_array($consultUserId);
-      //echo "ID del cliente: ",$id['id'];
+      
       $queryInsertUser = "EXEC CreateUser_ '$_POST[username]', '$_POST[password]', '$_POST[key]', 0, $id[id], 4, 0";
       $consultInsertUser = sqlsrv_query($conexion,$queryInsertUser);
+      
       if ($consultInsertUser)
       {
         //echo "Row successfully inserted.\n"; 
+
+        //update location
+        $geomtry = 'geometry::STGeomFromText("POINT(34 1)", 0)';
+        $query = "Update Client set location1 = $geomtry where id = $id[id]";
+        $consultInsertUser = sqlsrv_query($conexion,$queryInsertUser);
         
       } 
       else
@@ -50,8 +68,8 @@
     }  
 
 
-    header("Location: index.html");
-		exit();
+    //header("Location: index.html");
+		//exit();
   }
 
 ?>
@@ -190,10 +208,27 @@ https://templatemo.com/tm-551-stand-blog
                             <fieldset>
                               <label for="tier" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px" >Choose a Tier:</label>
                                 <select name="tier" id="tier" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;">
-                                <option value="0">None</option>
-                                  <option value="1">Short Glass</option>
-                                  <option value="2">Gleincairn</option>
-                                  <option value="3">Master Distiller</option>
+                                <?php
+                                  //connexion to dababase params	
+                                  $host = 'localhost';
+                                  $dbname = 'IrelandStore';
+                                  $username = 'sa';
+                                  $password= '12345678';
+                                  $puerto = 62727;
+                                  $serverName = "PINK-KIRBY\ENTERPRISE2, 62727";
+                                
+                                  //connexion controls
+                                  $connectionInfo = array( "Database"=>$dbname, "UID"=>$username, "PWD"=>$password);
+                                  $conexion = sqlsrv_connect( $serverName, $connectionInfo);
+
+                                  //querys to work with
+                                  $queryControl = "Select name_ from suscription where active_ = 1;";
+                                  $consult = sqlsrv_query($conexion,$queryControl);
+                                  while ($registro = sqlsrv_fetch_array($consult))
+                                    {
+                                    echo "<option name='tier'> ".$registro['name_']." </option>";
+                                  }
+                                ?>
                                 </select>
                             </fieldset>
                           </div>
@@ -222,16 +257,46 @@ https://templatemo.com/tm-551-stand-blog
 
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
-                              <label for="cars" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px ;" >
-                                Location 1:
+                              <label for="store" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px ;" >
+                                Store:
                               </label>
-                                <select name="location" id="location" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
-                                  <option value="volvo">USA</option>
-                                  <option value="saab">Scotland</option>
-                                  <option value="mercedes">Ireland</option>
+                                <select name="store" id="store" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
+                                  <option value="USA">USA</option>
+                                  <option value="Scotland">Scotland</option>
+                                  <option value="Ireland">Ireland</option>
                                 </select>
                             </fieldset>
-                          </div>   
+                          </div>  
+                          
+                          <div class="col-md-6 col-sm-12">
+                            <fieldset>
+                              <label for="location1" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px ;" >
+                                Zone 1:
+                              </label>
+                                <select name="location1" id="location1" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
+                                  <option value="1">1</option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
+                                  <option value="5">5</option>
+                                </select>
+                            </fieldset>
+                          </div> 
+
+                          <div class="col-md-6 col-sm-12">
+                            <fieldset>
+                              <label for="location2" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:130px ;" >
+                                Zone 2:
+                              </label>
+                                <select name="location2" id="location2" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
+                                  <option value="1">1</option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
+                                  <option value="5">5</option>
+                                </select>
+                            </fieldset>
+                          </div> 
                                                 
                           <div class="col-lg-12">
                             <fieldset>
