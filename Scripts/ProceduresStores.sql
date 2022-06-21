@@ -1,10 +1,10 @@
---USE ScotlandStore
+USE ScotlandStore
 GO
 
 --USE USAStore
 GO
 
-USE IrelandStore
+--USE IrelandStore
 GO
 
 
@@ -133,7 +133,7 @@ GO
 CREATE PROCEDURE CreateUser_(
 	@username VARCHAR(16),
 	@pass VARCHAR(64),
-	@administrator BINARY,
+	@administrator BIT,
 	@idClient INT,
 	@idUserType INT,
 	@outCodeResult int OUTPUT)
@@ -236,6 +236,25 @@ BEGIN
 	SET NOCOUNT ON
 	BEGIN TRY
 		BEGIN TRANSACTION T1
+			
+			--temp table to insert all the products
+			DECLARE @product TABLE(
+			id INT,
+			name_ VARCHAR(16),
+			aged VARCHAR(16),
+			idSupplier INT,
+			presentation VARCHAR(64),
+			currency VARCHAR(16),
+			cost_ INT,
+			idTypeProduct INT,
+			special BIT,
+			active_ BIT)
+
+			--insert all the productos in masterDB
+			INSERT INTO @product(id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_)
+			SELECT id, name_, aged, idSupplier, presentation, currency, cost_, idTypeProduct, special, active_
+			FROM OPENQUERY([MASTERDBPOSTGRES], 'SELECT * FROM Product')
+
 			--if low or non suscription shows normal products
 			IF 2 > (SELECT idSuscription FROM Client WHERE id=@idClient)
 				BEGIN
@@ -246,15 +265,11 @@ BEGIN
 					p.presentation,
 					p.currency,
 					p.cost_,
-					t.name_,
-					i2.image_ 
-					from inventory i, openquery(MASTERDBPOSTGRES,'Select * from product;') p, 
-						openquery(MASTERDBPOSTGRES,'Select * from producttype;') t, openquery(MASTERDBPOSTGRES,'Select * from image_;') i2 
+					p.idTypeProduct
+					from inventory i, @product p
 					where quantity > 0
-						AND p.id = i.idProduct
-						AND p.idTypeProduct = t.id
-						AND p.special = 0 --just the no special
-						AND i2.idProduct = p.id
+					AND p.id = i.idProduct
+					AND p.special = 0 --just the no special
 				END
 			ELSE ----if high suscription shows normal and special products
 				BEGIN
@@ -265,14 +280,10 @@ BEGIN
 					p.presentation,
 					p.currency,
 					p.cost_,
-					t.name_,
-					i2.image_ 
-					from inventory i, openquery(MASTERDBPOSTGRES,'Select * from product;') p, 
-						openquery(MASTERDBPOSTGRES,'Select * from producttype;') t, openquery(MASTERDBPOSTGRES,'Select * from image_;') i2 
-				WHERE quantity>0
-				AND p.id = i.idProduct
-				AND p.idTypeProduct = t.id
-				AND i2.idProduct = p.id
+					p.idTypeProduct
+					from inventory i, @product p
+					where quantity > 0
+					AND p.id = i.idProduct
 				END
 
 		COMMIT TRANSACTION T1

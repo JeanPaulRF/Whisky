@@ -29,6 +29,8 @@ $$
 $$ 
 LANGUAGE plpgsql;
 
+
+
 --read a product
 CREATE OR REPLACE FUNCTION ReadProduct(_pname_ VARCHAR(32))
 RETURNS TABLE(
@@ -57,6 +59,7 @@ $$
 	END;
 $$ 
 LANGUAGE plpgsql;
+
 
 
 --update a product
@@ -515,7 +518,7 @@ $$
 		INSERT INTO EvaluationAnswer(idEvaluation, idWorker, commentary, date_, storeNameUser)
 		SELECT _idEvaluation, w.id, _commentary, NOW()::DATE, _storeUserName
 		FROM Worker w
-		WHERE w._workerName = name_
+		WHERE w.name_ = _workerName
 		AND w.idWorkerType = 1;
 		
 	EXCEPTION
@@ -577,7 +580,6 @@ $$
 LANGUAGE plpgsql;
 
 
-drop function getbilling
 --BILLING
 CREATE OR REPLACE FUNCTION GetBilling(
 	_idClient int,
@@ -622,9 +624,6 @@ $$
 	END;
 $$ 
 LANGUAGE plpgsql;
-
-
-SELECT * FROM GetBilling(1, 'Scotland', 5)
 
 
 

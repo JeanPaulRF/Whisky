@@ -45,7 +45,7 @@ CREATE TABLE User_ (
 	[username] VARCHAR(16), --
 	[pass] VARBINARY(64), --
 	[key_] VARCHAR(64), --
-	[administrator] BINARY(1),
+	[administrator] BIT DEFAULT(0),
 	[idClient] INT,
 	[idUserType] INT,
 
