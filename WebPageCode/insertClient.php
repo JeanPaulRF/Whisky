@@ -41,28 +41,25 @@
       $consultUserId=sqlsrv_query($conexion,$queryGetID);
       $id = sqlsrv_fetch_array($consultUserId);
       
-      $queryInsertUser = "EXEC CreateUser_ '$_POST[username]', '$_POST[password]', '$_POST[key]', 0, $id[id], 4, 0";
+      $queryInsertUser = "EXEC CreateUser_ '$_POST[username]', '$_POST[password]', 0, $id[id], 4, 0";
       $consultInsertUser = sqlsrv_query($conexion,$queryInsertUser);
-      
       if ($consultInsertUser)
       {
         //echo "Row successfully inserted.\n"; 
-
         //update location
         $geomtry = 'geometry::STGeomFromText("POINT(34 1)", 0)';
         $query = "Update Client set location1 = $geomtry where id = $id[id]";
-        $consultInsertUser = sqlsrv_query($conexion,$queryInsertUser);
-        
+        $consultInsertUser = sqlsrv_query($conexion,$query);      
       } 
       else
       {  
-        echo "Row insertion failed (user).\n";  
+        echo "<script> alert('Row insertion failed (user)');</script>";  
         die(print_r(sqlsrv_errors(), true));    
       } 
-
-    }
+      }
     else
     {  
+      echo "<script> alert('Row insertion failed (client)');</script>";
       echo "Row insertion failed (client).\n";  
       die(print_r(sqlsrv_errors(), true));  
     }  
@@ -246,12 +243,6 @@ https://templatemo.com/tm-551-stand-blog
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
                               <input name="password" type="password" id="password" placeholder="password  " required="">
-                            </fieldset>
-                          </div>
-
-                          <div class="col-md-6 col-sm-12">
-                            <fieldset>
-                              <input name="key" type="text" id="key" placeholder="Key" required="">
                             </fieldset>
                           </div>
 

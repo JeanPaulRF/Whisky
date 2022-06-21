@@ -26,21 +26,21 @@ if(isset($_POST['save']) && $_POST['save']=='Save')
 
   $consultCheck= sqlsrv_query($conexion,$queryCheckUser);
   $registro = sqlsrv_fetch_array($consultCheck);
-  
-  if($registro['id'] == 0)
+  /*
+  if($registro['result'] == 1)
   {
-    header("Location: buy.php");
-		exit();
+    //header("Location: buy.php");
+		//exit();
   }    
-  if($registro['id'] == 1)
+  if($registro['result'] == 0)
   {
     echo "<script> alert('Contraseña incorrecta');</script>";
   } 
-  if($registro['id'] == 3)
+  if($registro['result'] == 3)
   {
     echo "<script> alert('Usuario no registrado');</script>";
   } 
-  
+  */
   
 }
 
@@ -75,7 +75,9 @@ if(isset($_POST['save']) && $_POST['save']=='Save')
     {
         var name = document.getElementById('username').value;
         var password = document.getElementById('password').value;
+        var store = document.getElementById('store').value;
         localStorage.setItem("textvalue",name);
+        localStorage.setItem("textvalue2",store);
         return false;
     }
     </script>
@@ -160,7 +162,7 @@ if(isset($_POST['save']) && $_POST['save']=='Save')
                       <h2>Log in to view your personal store</h2>
                     </div>
                     <div class="content">    
-                      <form id="contact" method="post" action="">
+                      <form id="contact" method="post" action="buy.php  ">
                         <div class="row">
                           <div class="col-md-6 col-sm-12">
                             <fieldset>
@@ -178,9 +180,9 @@ if(isset($_POST['save']) && $_POST['save']=='Save')
                                 Store:
                               </label>
                                 <select name="store" id="store" style="color: rgb(141, 145, 145);  padding: 10px; font-weight: 500; width:200px;  ">
-                                  <option value="USA">USA</option>
-                                  <option value="Scotland">Scotland</option>
-                                  <option value="Ireland">Ireland</option>
+                                  <option value="USAStore">USA</option>
+                                  <option value="ScotlandStore">Scotland</option>
+                                  <option value="IrelandStore">Ireland</option>
                                 </select>
                             </fieldset>
                           </div> 

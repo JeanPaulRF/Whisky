@@ -140,7 +140,7 @@ CREATE PROCEDURE CreateUser_(
 AS
 BEGIN
 	SET NOCOUNT ON
-	BEGIN TRY
+	BEGIN TRY		
 		BEGIN TRANSACTION T1
 
 			DECLARE @pssb VARBINARY(64)
@@ -265,11 +265,13 @@ BEGIN
 					p.presentation,
 					p.currency,
 					p.cost_,
-					p.idTypeProduct
-					from inventory i, @product p
+					t.name_
+					from inventory i, openquery(MASTERDBPOSTGRES,'Select * from product;') p, 
+						openquery(MASTERDBPOSTGRES,'Select * from producttype;') t
 					where quantity > 0
-					AND p.id = i.idProduct
-					AND p.special = 0 --just the no special
+						AND p.id = i.idProduct
+						AND p.idTypeProduct = t.id
+						AND p.special = 0 --just the no special
 				END
 			ELSE ----if high suscription shows normal and special products
 				BEGIN
@@ -280,10 +282,12 @@ BEGIN
 					p.presentation,
 					p.currency,
 					p.cost_,
-					p.idTypeProduct
-					from inventory i, @product p
-					where quantity > 0
-					AND p.id = i.idProduct
+					t.name_ 
+					from inventory i, openquery(MASTERDBPOSTGRES,'Select * from product;') p, 
+						openquery(MASTERDBPOSTGRES,'Select * from producttype;') t
+				WHERE quantity>0
+				AND p.id = i.idProduct
+				AND p.idTypeProduct = t.id
 				END
 
 		COMMIT TRANSACTION T1
